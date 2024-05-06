@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, send_file
 import subprocess
 import yt_dlp
+from flask import send_from_directory
 app = Flask(__name__)
 
 DOWNLOADS_FOLDER = 'downloads'
@@ -32,12 +33,20 @@ def search():
         return render_template('search_results.html', query=query, search_results=search_results)
     else:
         return render_template('search.html')
-from flask import send_file
 
 @app.route('/play/<path:music_file>')
-
 def play(music_file):
-    return send_file(DOWNLOADS_FOLDER+'/'+music_file, as_attachment=False)
+    song = {
+        'title': '３月桃花',
+        'artist': '珂拉琪 Collage',
+        'url': DOWNLOADS_FOLDER+'/'+music_file+".webm"
+    }
+    return render_template('play.html', song=song)
+
+@app.route('/play/downloads/<path:filename>')
+def download_file(filename):
+    return send_from_directory('downloads', filename)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0')
 

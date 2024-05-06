@@ -4,13 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Now Playing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to bottom, #4CAF50, #ffffff);
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+    }
+
+    .song-info {
+        margin-bottom: 20px;
+    }
+
+    .audio-player {
+        width: 100%;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .controls button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .controls button:hover {
+        background-color: #45a049;
+    }
+
+    .controls button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+    </style>
 </head>
 <body>
-    <h1>Now Playing</h1>
-    <audio controls>
-        <source src="{{ music_file }}" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+    <div class="container">
+        <h1>Now Playing</h1>
+        <div class="song-info">
+            <h2>{{ song.title }}</h2>
+            <p>{{ song.artist }}</p>
+        </div>
+        <audio class="audio-player" controls>
+            <source src="{{ song.url }}" type="audio/webm">
+            Your browser does not support the audio element.
+        </audio>
+        <div class="controls">
+            <button id="playPauseBtn" onclick="playPause()"><i class="fas fa-play"></i></button>
+            <button id="stopBtn" onclick="stop()"><i class="fas fa-stop"></i></button>
+            <button id="volumeUpBtn" onclick="volumeUp()"><i class="fas fa-volume-up"></i></button>
+            <button id="volumeDownBtn" onclick="volumeDown()"><i class="fas fa-volume-down"></i></button>
+        </div>
+    </div>
+
+    <script>
+    const audio = document.querySelector('.audio-player');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+
+    function playPause() {
+        if (audio.paused) {
+            audio.play();
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            audio.pause();
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    }
+
+    function stop() {
+        audio.pause();
+        audio.currentTime = 0;
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    }
+
+    function volumeUp() {
+        if (audio.volume < 1) {
+            audio.volume += 0.1;
+        }
+    }
+
+    function volumeDown() {
+        if (audio.volume > 0) {
+            audio.volume -= 0.1;
+        }
+    }
+
+    audio.onended = function() {
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    };
+    </script>
 </body>
 </html>
 
