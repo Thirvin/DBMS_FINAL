@@ -35,6 +35,7 @@ def search():
 from flask import send_file
 
 @app.route('/play/<path:music_file>')
+
 def play(music_file):
     return send_file(DOWNLOADS_FOLDER+'/'+music_file, as_attachment=False)
 if __name__ == '__main__':
