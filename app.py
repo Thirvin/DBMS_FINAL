@@ -5,44 +5,60 @@ from flask import send_from_directory
 app = Flask(__name__)
 
 DOWNLOADS_FOLDER = 'downloads'
+urls = ['https://youtu.be/ovTiSA9T-RU?si=H5r_oO7-tboMBeYB','https://youtu.be/kkUWlcjmOew?si=LYhySQt4XrsUFOxP']
+def get_URL_from_index(index):
+    return urls[int(index)] 
 
 @app.route('/')
 def index():
     return render_template('index.html')
-@app.route('/download_music', methods=['POST'])
-def download_music():
-    url = request.form['url']
-    
+
+@app.route('/search', methods=['POST'])
+def search():
+    youtube_url = request.form['youtube_url']
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': f'{DOWNLOADS_FOLDER}/%(title)s.%(ext)s',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'webm',
+            'preferredquality': '192',
+        }],
+    }
+    audio_url = ""
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(youtube_url, download=False)
+        audio_url = info_dict['url']
+
+    return render_template('play.html', audio_url=audio_url)
+
+@app.route('/play/<path:index>')
+def play(index):
+    youtube_url = get_URL_from_index(index)
+
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'webm',
+            'preferredquality': '192',
+        }],
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-    
-    return "Music downloaded successfully!"
-@app.route('/search', methods=['GET', 'POST'])
-def search():
-    if request.method == 'POST':
-        query = request.form['query']
-        search_command = ['youtube-dl', '-x', '--audio-format', 'mp3', '-o', f'{DOWNLOADS_FOLDER}/%(title)s.%(ext)s', f'ytsearch:"{query}"']
-        subprocess.run(search_command)
-        music_files = subprocess.run(['ls', DOWNLOADS_FOLDER], capture_output=True, text=True).stdout.split('\n')
-        music_files = [file for file in music_files if file]
-        search_results = [{"title": file.split('.')[0], "url": f"/play/{i}"} for i, file in enumerate(music_files)]
-        return render_template('search_results.html', query=query, search_results=search_results)
-    else:
-        return render_template('search.html')
+        info_dict = ydl.extract_info(youtube_url, download=False)
+        audio_url = info_dict['url']
 
-@app.route('/play/<path:music_file>')
+    return render_template('play.html', audio_url=audio_url)
+
+'''
 def play(music_file):
     song = {
         'title': '３月桃花',
         'artist': '珂拉琪 Collage',
-        'url': DOWNLOADS_FOLDER+'/'+music_file+".webm"
+        #'url': DOWNLOADS_FOLDER+'/'+music_file+".webm"
+        'url' : 'https://youtu.be/ovTiSA9T-RU?si=WnELN2wrWmW-lLlF'
     }
     return render_template('play.html', song=song)
-
+'''
 @app.route('/play/downloads/<path:filename>')
 def download_file(filename):
     return send_from_directory('downloads', filename)

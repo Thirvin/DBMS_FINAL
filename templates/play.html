@@ -67,57 +67,12 @@
     <div class="container">
         <h1>Now Playing</h1>
         <div class="song-info">
-            <h2>{{ song.title }}</h2>
-            <p>{{ song.artist }}</p>
         </div>
         <audio class="audio-player" controls>
-            <source src="{{ song.url }}" type="audio/webm">
+            <source src="{{ audio_url }}" type="audio/webm">
             Your browser does not support the audio element.
         </audio>
-        <div class="controls">
-            <button id="playPauseBtn" onclick="playPause()"><i class="fas fa-play"></i></button>
-            <button id="stopBtn" onclick="stop()"><i class="fas fa-stop"></i></button>
-            <button id="volumeUpBtn" onclick="volumeUp()"><i class="fas fa-volume-up"></i></button>
-            <button id="volumeDownBtn" onclick="volumeDown()"><i class="fas fa-volume-down"></i></button>
-        </div>
     </div>
-
-    <script>
-    const audio = document.querySelector('.audio-player');
-    const playPauseBtn = document.getElementById('playPauseBtn');
-
-    function playPause() {
-        if (audio.paused) {
-            audio.play();
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        } else {
-            audio.pause();
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        }
-    }
-
-    function stop() {
-        audio.pause();
-        audio.currentTime = 0;
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    }
-
-    function volumeUp() {
-        if (audio.volume < 1) {
-            audio.volume += 0.1;
-        }
-    }
-
-    function volumeDown() {
-        if (audio.volume > 0) {
-            audio.volume -= 0.1;
-        }
-    }
-
-    audio.onended = function() {
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    };
-    </script>
 </body>
 </html>
 
