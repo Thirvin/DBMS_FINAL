@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>Now Playing</h1>
+        <div class="song-info">
+            <ul>
+                {% for song in playlist_data %}
+                    <li>{{ song.title }} - {{ song.artist }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <audio id="audio-player" class="audio-player" controls>
+            {% if playlist_data %}
+                <source id="audio-source" src="{{ playlist_data[0].audio_url }}" type="audio/webm">
+            {% else %}
+                <p>Your playlist is empty.</p>
+            {% endif %}
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <script>
+        var audioPlayer = document.getElementById('audio-player');
+        var audioSource = document.getElementById('audio-source');
+        var currentIndex = 0;
+        var playlistData = {{ playlist_data|tojson }};
+
+
+        audioPlayer.addEventListener('ended', function() {
+            console.log('Playback ended.');
+
+            currentIndex++;
+            if (currentIndex < playlistData.length) {
+                audioSource.src = playlistData[currentIndex].audio_url;
+                audioPlayer.load();
+                audioPlayer.play();
+            } else {
+                console.log('Reached end of playlist.');
+            }
+        });
+    </script>
+{% endblock %}
