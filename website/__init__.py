@@ -21,7 +21,7 @@ def create_app():
     app.register_blueprint(auth,url_prfix = '/auth/')
 
 
-    from .models import User,Note
+    from .models import User,Music
     with app.app_context():
         db.create_all()
 

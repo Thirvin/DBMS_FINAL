@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
+from .models import Music
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
@@ -75,8 +76,10 @@ def register():
 
 @auth.route('/search', methods=['POST'])
 def search():
-    youtube_url = request.form['youtube_url']
+    print(dict(request.form))
+    youtube_url = request.form['search_query']
     ydl_opts = {
+        'extract_flat': True,  
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -88,7 +91,15 @@ def search():
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(youtube_url, download=False)
         audio_url = info_dict['url']
+        title = info_dict['title']
+        id = info_dict['id']
+        print(audio_url)
+        new_music = Music(id = str(id),title = str(title),play_url = str(audio_url))
+        if Music.query.filter_by(id=id).first() == None:
+            db.session.add(new_music)
+            db.session.commit()
 
+    print(current_user.email)
     return render_template('play.html', audio_url=audio_url,user = current_user)
 
 @auth.route('/play/<path:index>',methods=['GET'])
