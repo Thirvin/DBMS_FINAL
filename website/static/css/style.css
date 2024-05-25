@@ -33,6 +33,7 @@ body {
 .iphone .album-cover {
   box-sizing: border-box;
   display: flex;
+  overflow: hidden;
   flex-direction: column;
 }
 
@@ -48,7 +49,10 @@ body {
   clip-path: ellipse(61% 64% at 82% 56%);
 }
 .iphone .album-cover img {
-  width: 100%;
+  width: 248px;
+  height: 248px;
+  object-fit: cover;
+  object-position: center;
   border-radius: 15px;
 }
 

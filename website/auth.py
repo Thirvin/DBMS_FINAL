@@ -122,14 +122,17 @@ def play(index):
     info_list = []
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         for youtube_url in youtube_urls:
-            info_list.append(ydl.extract_info(youtube_url, download=False))
+            info = ydl.extract_info(youtube_url, download=False)
+            print()
+            info_list.append(info)
 
     playlist_data = []
     for info in info_list:
         title = info['title']
         artist = info['uploader']
         audio_url = info['url']
-        playlist_data.append({'title': title, 'artist': artist, 'audio_url': audio_url})
+        thumbnail_url = max(info['thumbnails'], key=lambda x: x['preference'])['url']
+        playlist_data.append({'title': title, 'artist': artist, 'audio_url': audio_url, 'thumbnail_url': thumbnail_url})
 
     return render_template('play.html', playlist_data=playlist_data, user = current_user)
 

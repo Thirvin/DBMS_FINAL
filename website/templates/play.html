@@ -13,7 +13,8 @@
     </div>
     <div class="album-cover">
       <div class="album-overlay"></div>
-      <img src="https://yamano-music-online.com/wp-content/uploads/2023/05/b61b2479ea8b1ee5d723cbb7543d70d3-scaled.jpg"
+      <img id="album-cover"
+        src="https://yamano-music-online.com/wp-content/uploads/2023/05/b61b2479ea8b1ee5d723cbb7543d70d3-scaled.jpg"
         alt="rock">
       <!-- 圖片待更動 目前只是靜圖 -->
       <div class="album-text">
@@ -60,6 +61,7 @@
   let playlist = {{ playlist_data | tojson }};
   let currentIndex = 0;
   const audioPlayer = document.getElementById("audio-player");
+  const albumCover = document.getElementById("album-cover");
   const songTitle = document.getElementById("song-title");
   const artistTitle = document.getElementById("artist-title");
   const playButton = document.getElementById("play-button");
@@ -81,6 +83,7 @@
     songTitle.textContent = playlist[index].title;
     artistTitle.textContent = playlist[index].artist;
     audioPlayer.src = playlist[index].audio_url;
+    albumCover.src = playlist[index].thumbnail_url;
     if (isPlaying) {
       audioPlayer.play();
     }
