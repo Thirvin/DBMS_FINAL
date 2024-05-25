@@ -3,65 +3,139 @@
 {% block title %}Now Playing{% endblock %}
 
 {% block content %}
-<!--
-    <div class="container">
-        <h1>Now Playing</h1>
-        <div class="song-info">
-            <ul>
-                {% for song in playlist_data %}
-                    <li>{{ song.title }} - {{ song.artist }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <audio id="audio-player" class="audio-player" controls>
-            {% if playlist_data %}
-                <source id="audio-source" src="{{ playlist_data[0].audio_url }}" type="audio/webm">
-            {% else %}
-                <p>Your playlist is empty.</p>
-            {% endif %}
-            Your browser does not support the audio element.
-        </audio>
-        <form action="/search" method="post">
-            <div class="form-group">
-                <label for="search_query">Search:</label>
-                <input type="text" class="form-control" id="search_query" name="search_query" placeholder="Enter song title or artist">
-            </div>
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-    </div>
--->
 <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 <div class="container">
-    <div class="iphone neu">
-      <div class="title">
-        <div><i class="fas fa-chevron-left"></i></div>
-        <div>NOW PLAYING</div>
-        <div><i class="fas fa-ellipsis-v"></i></div>
-      </div>
-      <div class="album-cover">
-        <div class="album-overlay"></div>
-        <img src="https://yamano-music-online.com/wp-content/uploads/2023/05/b61b2479ea8b1ee5d723cbb7543d70d3-scaled.jpg" alt="rock">
-        <h2 class="song-title">
-          Redbone
+  <div class="iphone neu">
+    <div class="title">
+      <div><i class="fas fa-chevron-left"></i></div>
+      <div>NOW PLAYING</div>
+      <div><i class="fas fa-ellipsis-v"></i></div>
+    </div>
+    <div class="album-cover">
+      <div class="album-overlay"></div>
+      <img src="https://yamano-music-online.com/wp-content/uploads/2023/05/b61b2479ea8b1ee5d723cbb7543d70d3-scaled.jpg"
+        alt="rock">
+      <!-- 圖片待更動 目前只是靜圖 -->
+      <div class="album-text">
+        <h2 id="song-title">
+          Song Name
         </h2>
-        <h3 class="artist-title">
-          Childish Gambino
+        <h3 id="artist-title">
+          Artist Name
         </h3>
       </div>
-      <div class="buttons">
-            <button class="btn lg red neu"><i class="fas fa-heart"></i></button>
-            <button class="btn lg neu"><i class="fas fa-backward"></i></button>
-            <button class="btn lg neu"><i class="fas fa-play"></i></button>
-            <button class="btn lg neu"><i class="fas fa-forward"></i></button>
-        </div>
-      <div class="track neu">
-        <div></div>
+    </div>
+    <div class="buttons">
+      <button class="btn lg red neu" id="fav-button"><i class="fas fa-heart"></i></button>
+      <button class="btn lg neu" id="prev-button"><i class="fas fa-backward"></i></button>
+      <button class="btn lg neu" id="play-button"><i class="fas fa-play"></i></button>
+      <button class="btn lg neu" id="next-button"><i class="fas fa-forward"></i></button>
+    </div>
+    <audio id="audio-player"></audio>
+    <div class="track-container">
+      <div class="track neu" id="progress-container">
+        <div id="progress"></div>
       </div>
-      <!-- <div class="lyrics">
+      <div class="progress-time-display">
+        <div id="now-display" class="time-display">0:00</div>
+        <div id="total-display" class="time-display">0:00</div>
+      </div>
+      
+    </div>
+    <!-- <div class="lyrics">
         <i class="fas fa-angle-up"></i>
         <span>LYRICS</span>
       </div> -->
-    </div>
   </div>
-{% endblock %}
+</div>
 
+<script>
+  // 目前進度整理
+  // 暫停、播放沒問題
+  // 下一首、上一首沒問題
+  // 循環播放、隨機播放等等還沒處理
+  // 目前會自動播放下一首
+  // 預設循環播放狀態
+  document.addEventListener("DOMContentLoaded", function () {
+  let playlist = {{ playlist_data | tojson }};
+  let currentIndex = 0;
+  const audioPlayer = document.getElementById("audio-player");
+  const songTitle = document.getElementById("song-title");
+  const artistTitle = document.getElementById("artist-title");
+  const playButton = document.getElementById("play-button");
+  const nextButton = document.getElementById("next-button");
+  const prevButton = document.getElementById("prev-button");
+  const progressContainer = document.getElementById("progress-container");
+  const progress = document.getElementById("progress");
+  const nowDisplay = document.getElementById("now-display");
+  const totalDisplay = document.getElementById("total-display");
+  let isPlaying = false;
+
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  }
+
+  function loadSong(index) {
+    songTitle.textContent = playlist[index].title;
+    artistTitle.textContent = playlist[index].artist;
+    audioPlayer.src = playlist[index].audio_url;
+    if (isPlaying) {
+      audioPlayer.play();
+    }
+  }
+
+  function updateProgress() {
+    const currentTime = audioPlayer.currentTime;
+    const duration = audioPlayer.duration;
+    progress.style.width = `${(currentTime / duration) * 100}%`;
+    nowDisplay.textContent = `${formatTime(currentTime)}`;
+  }
+
+  audioPlayer.addEventListener("ended", function () {
+    currentIndex = (currentIndex + 1) % playlist.length;
+    loadSong(currentIndex);
+  });
+
+  audioPlayer.addEventListener("durationchange", function () {
+    totalDisplay.textContent = formatTime(audioPlayer.duration);
+  });
+
+  audioPlayer.addEventListener("timeupdate", updateProgress);
+
+  progressContainer.addEventListener("click", function (e) {
+    const width = progressContainer.clientWidth;
+    const clickX = e.offsetX;
+    const duration = audioPlayer.duration;
+    audioPlayer.currentTime = (clickX / width) * duration;
+  });
+
+  playButton.addEventListener("click", function () {
+    if (isPlaying) {
+      audioPlayer.pause();
+      playButton.innerHTML = '<i class="fas fa-play"></i>';
+    } else {
+      audioPlayer.play();
+      playButton.innerHTML = '<i class="fas fa-pause"></i>';
+    }
+    isPlaying = !isPlaying;
+  });
+
+  nextButton.addEventListener("click", function () {
+    currentIndex = (currentIndex + 1) % playlist.length;
+    loadSong(currentIndex);
+  });
+
+  prevButton.addEventListener("click", function () {
+    currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+    loadSong(currentIndex);
+  });
+
+  // Initialize with the first song
+  if (playlist.length > 0) {
+    loadSong(0);
+  }
+  });
+</script>
+{% endblock %}

@@ -6,7 +6,11 @@ from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 import yt_dlp
 auth = Blueprint('auth', __name__)
-urls = ['https://youtu.be/ovTiSA9T-RU?si=H5r_oO7-tboMBeYB','https://youtu.be/kkUWlcjmOew?si=LYhySQt4XrsUFOxP']
+urls = [[
+    'https://youtu.be/ovTiSA9T-RU?si=H5r_oO7-tboMBeYB',
+    'https://youtu.be/kkUWlcjmOew?si=LYhySQt4XrsUFOxP',
+    'https://www.youtube.com/watch?v=ve6SQ3V8BSw'
+]]
 def get_URL_from_index(index):
     return urls[int(index)] 
 
@@ -104,7 +108,7 @@ def search():
 
 @auth.route('/play/<path:index>',methods=['GET'])
 def play(index):
-    youtube_url = get_URL_from_index(index)
+    youtube_urls = get_URL_from_index(index)
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -114,13 +118,18 @@ def play(index):
             'preferredquality': '192',
         }],
     }
+
+    info_list = []
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(youtube_url, download=False)
-        audio_url = info_dict['url']
-    playlist_data = [
-        {'title': 'Song 1', 'artist': 'Artist 1', 'audio_url': audio_url},
-        {'title': 'Song 2', 'artist': 'Artist 2', 'audio_url': audio_url},
-        {'title': 'Song 3', 'artist': 'Artist 3', 'audio_url': 'song3.webm'},
-    ]
+        for youtube_url in youtube_urls:
+            info_list.append(ydl.extract_info(youtube_url, download=False))
+
+    playlist_data = []
+    for info in info_list:
+        title = info['title']
+        artist = info['uploader']
+        audio_url = info['url']
+        playlist_data.append({'title': title, 'artist': artist, 'audio_url': audio_url})
+
     return render_template('play.html', playlist_data=playlist_data, user = current_user)
 
