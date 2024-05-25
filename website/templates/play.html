@@ -55,88 +55,90 @@
   // 循環播放、隨機播放等等還沒處理
   // 目前會自動播放下一首
   // 預設循環播放狀態
-  document.addEventListener("DOMContentLoaded", function () {
-  let playlist = {{ playlist_data | tojson }};
-  let currentIndex = 0;
-  const audioPlayer = document.getElementById("audio-player");
-  const albumCover = document.getElementById("album-cover");
-  const songTitle = document.getElementById("song-title");
-  const artistTitle = document.getElementById("artist-title");
-  const playButton = document.getElementById("play-button");
-  const nextButton = document.getElementById("next-button");
-  const prevButton = document.getElementById("prev-button");
-  const progressContainer = document.getElementById("progress-container");
-  const progress = document.getElementById("progress");
-  const nowDisplay = document.getElementById("now-display");
-  const totalDisplay = document.getElementById("total-display");
-  let isPlaying = false;
+  $(document).ready(function () {
+    let playlist = {{ playlist_data | tojson }};
+    let currentIndex = 0;
+    const $audioPlayer = $("#audio-player");
+    const audio = $audioPlayer[0];
+    const $albumCover = $("#album-cover");
+    const $songTitle = $("#song-title");
+    const $artistTitle = $("#artist-title");
+    const $playButton = $("#play-button");
+    const $nextButton = $("#next-button");
+    const $prevButton = $("#prev-button");
+    const $progressContainer = $("#progress-container");
+    const $progress = $("#progress");
+    const $nowDisplay = $("#now-display");
+    const $totalDisplay = $("#total-display");
+    let isPlaying = false;
 
-  function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-  }
-
-  function loadSong(index) {
-    songTitle.textContent = playlist[index].title;
-    artistTitle.textContent = playlist[index].artist;
-    audioPlayer.src = playlist[index].audio_url;
-    albumCover.src = playlist[index].thumbnail_url;
-    if (isPlaying) {
-      audioPlayer.play();
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     }
-  }
 
-  function updateProgress() {
-    const currentTime = audioPlayer.currentTime;
-    const duration = audioPlayer.duration;
-    progress.style.width = `${(currentTime / duration) * 100}%`;
-    nowDisplay.textContent = `${formatTime(currentTime)}`;
-  }
-
-  audioPlayer.addEventListener("ended", function () {
-    currentIndex = (currentIndex + 1) % playlist.length;
-    loadSong(currentIndex);
-  });
-
-  audioPlayer.addEventListener("durationchange", function () {
-    totalDisplay.textContent = formatTime(audioPlayer.duration);
-  });
-
-  audioPlayer.addEventListener("timeupdate", updateProgress);
-
-  progressContainer.addEventListener("click", function (e) {
-    const width = progressContainer.clientWidth;
-    const clickX = e.offsetX;
-    const duration = audioPlayer.duration;
-    audioPlayer.currentTime = (clickX / width) * duration;
-  });
-
-  playButton.addEventListener("click", function () {
-    if (isPlaying) {
-      audioPlayer.pause();
-      playButton.innerHTML = '<i class="fas fa-play"></i>';
-    } else {
-      audioPlayer.play();
-      playButton.innerHTML = '<i class="fas fa-pause"></i>';
+    function loadSong(index) {
+      $songTitle.text(playlist[index].title);
+      $artistTitle.text(playlist[index].artist);
+      $audioPlayer.attr("src", playlist[index].audio_url);
+      $albumCover.attr("src", playlist[index].thumbnail_url);
+      if (isPlaying) {
+        audio.play();
+      }
     }
-    isPlaying = !isPlaying;
-  });
 
-  nextButton.addEventListener("click", function () {
-    currentIndex = (currentIndex + 1) % playlist.length;
-    loadSong(currentIndex);
-  });
+    function updateProgress() {
+      const currentTime = audio.currentTime;
+      const duration = audio.duration;
+      $progress.css("width", `${(currentTime / duration) * 100}%`);
+      $nowDisplay.text(formatTime(currentTime));
+    }
 
-  prevButton.addEventListener("click", function () {
-    currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-    loadSong(currentIndex);
-  });
+    $audioPlayer.on("ended", function () {
+      currentIndex = (currentIndex + 1) % playlist.length;
+      loadSong(currentIndex);
+    });
 
-  // Initialize with the first song
-  if (playlist.length > 0) {
-    loadSong(0);
-  }
+    $audioPlayer.on("durationchange", function () {
+      $totalDisplay.text(formatTime(audio.duration));
+    });
+
+    $audioPlayer.on("timeupdate", updateProgress);
+
+    $progressContainer.on("click", function (e) {
+      const width = $progressContainer.width();
+      const clickX = e.offsetX;
+      const duration = audio.duration;
+      audio.currentTime = (clickX / width) * duration;
+    });
+
+    $playButton.on("click", function () {
+      if (isPlaying) {
+        audio.pause();
+        $playButton.html('<i class="fas fa-play"></i>');
+      } else {
+        audio.play();
+        $playButton.html('<i class="fas fa-pause"></i>');
+      }
+      isPlaying = !isPlaying;
+    });
+
+    $nextButton.on("click", function () {
+      currentIndex = (currentIndex + 1) % playlist.length;
+      loadSong(currentIndex);
+    });
+
+    $prevButton.on("click", function () {
+      currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+      loadSong(currentIndex);
+    });
+
+    // Initialize with the first song
+    if (playlist.length > 0) {
+      loadSong(0);
+    }
   });
 </script>
+
 {% endblock %}
