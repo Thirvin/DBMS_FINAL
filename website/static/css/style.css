@@ -96,16 +96,15 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  font-size: 0.75em;
   margin-top: 1em;
 }
 
 .iphone .time-display {
   font-weight: bold;
-  /* padding: 0.5em 0; */
   right: 0;
   margin: 0;
   color: #65717e;
+  font-size: 0.75em;
 }
 
 .iphone #now-display {
@@ -157,6 +156,13 @@ body {
   color: #e22d49;
 }
 
+.volume-icon {
+  display: flex;
+  flex-direction: column;
+  margin-right: 1em;
+  align-items: center;
+}
+
 .sound-container {
   display: flex;
   align-items: center;
@@ -173,8 +179,4 @@ body {
 
 #sound-bar {
   width: 100%;
-}
-
-.sound-container .sound-icon {
-  margin-right: 1em;
 }

@@ -78,11 +78,13 @@
         audio.currentTime = (clickX / width) * duration;
       });
     </script>
-    
+
     <div style="padding-top: 1em;"></div>
     <div class="sound-container">
-      <i class="fas fa-volume-up sound-icon"></i>
-      <div id="sound-display" class="time-display">100%</div>
+      <div class="volume-icon">
+        <i class="fas fa-volume-up sound-icon"></i>
+        <div id="sound-display" class="time-display">100%</div>
+      </div>
       <div class="track neu" id="soundbar-container">
         <div id="sound-bar"></div>
       </div>
