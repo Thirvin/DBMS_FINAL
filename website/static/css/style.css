@@ -15,7 +15,7 @@ body {
 
 .iphone {
   width: 312px;
-  height: 612px;
+  height: 660px;
   background: #e0e5ec;
   border-radius: 2em;
   box-sizing: border-box;
@@ -82,7 +82,6 @@ body {
 }
 
 .iphone .track {
-  margin-top: 1em;
   height: 10px;
 }
 .iphone .track div {
@@ -156,4 +155,26 @@ body {
 
 .red {
   color: #e22d49;
+}
+
+.sound-container {
+  display: flex;
+  align-items: center;
+}
+
+.sound-container .slide-button {
+  display: flex;
+  align-items: center;
+}
+
+.sound-container #soundbar-container {
+  flex: auto;
+}
+
+#sound-bar {
+  width: 100%;
+}
+
+.sound-container .sound-icon {
+  margin-right: 1em;
 }

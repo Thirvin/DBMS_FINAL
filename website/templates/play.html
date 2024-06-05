@@ -31,17 +31,76 @@
       <button class="btn lg neu" id="play-button"><i class="fas fa-play"></i></button>
       <button class="btn lg neu" id="next-button"><i class="fas fa-forward"></i></button>
     </div>
+
     <audio id="audio-player"></audio>
+
+    <div style="padding-top: 1em;"></div>
     <div class="track-container">
       <div class="track neu" id="progress-container">
         <div id="progress"></div>
       </div>
+
       <div class="progress-time-display">
         <div id="now-display" class="time-display">0:00</div>
         <div id="total-display" class="time-display">0:00</div>
       </div>
-      
     </div>
+    <script>
+      const $audioPlayer = $("#audio-player");
+      const audio = $audioPlayer[0];
+      const $playButton = $("#play-button");
+      const $progressContainer = $("#progress-container");
+      const $progress = $("#progress");
+      const $nowDisplay = $("#now-display");
+      const $totalDisplay = $("#total-display");
+
+      function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+      }
+
+      $audioPlayer.on("durationchange", () => {
+        $totalDisplay.text(formatTime(audio.duration));
+      });
+  
+      $audioPlayer.on("timeupdate", () => {
+        const currentTime = audio.currentTime;
+        const duration = audio.duration;
+        $progress.css("width", `${(currentTime / duration) * 100}%`);
+        $nowDisplay.text(formatTime(currentTime));
+      });
+
+      $progressContainer.on("click", (e) => {
+        const width = $progressContainer.width();
+        const clickX = e.offsetX;
+        const duration = audio.duration;
+        audio.currentTime = (clickX / width) * duration;
+      });
+    </script>
+    
+    <div style="padding-top: 1em;"></div>
+    <div class="sound-container">
+      <i class="fas fa-volume-up sound-icon"></i>
+      <div id="sound-display" class="time-display">100%</div>
+      <div class="track neu" id="soundbar-container">
+        <div id="sound-bar"></div>
+      </div>
+    </div>
+    <script>
+      const $soundbarContainer = $("#soundbar-container");
+      const $soundbar = $("#sound-bar");
+      const $soundDisplay = $("#sound-display");
+
+      $soundbarContainer.on("click", (e) => {
+        const width = $soundbarContainer.width();
+        const clickX = e.offsetX * 1.05;
+        const volume = Math.min(clickX / width, 1);
+        $soundbar.css("width", `${ volume * 100 }%`);
+        audio.volume = volume;
+        $soundDisplay.text(`${ Math.round(volume * 100) }%`);
+      });
+    </script>
     <!-- <div class="lyrics">
         <i class="fas fa-angle-up"></i>
         <span>LYRICS</span>
@@ -56,31 +115,18 @@
   // 循環播放、隨機播放等等還沒處理
   // 目前會自動播放下一首
   // 預設循環播放狀態
-  // TODO: 音量
   // TODO: show all song in playlist
   // TODO: add song
   $(document).ready(function () {
     let playlist = {{ playlist_data | tojson }};
     let currentIndex = 0;
     const $audioPlayer = $("#audio-player");
-    const audio = $audioPlayer[0];
     const $albumCover = $("#album-cover");
     const $songTitle = $("#song-title");
     const $artistTitle = $("#artist-title");
-    const $playButton = $("#play-button");
     const $nextButton = $("#next-button");
     const $prevButton = $("#prev-button");
-    const $progressContainer = $("#progress-container");
-    const $progress = $("#progress");
-    const $nowDisplay = $("#now-display");
-    const $totalDisplay = $("#total-display");
     let isPlaying = false;
-
-    function formatTime(seconds) {
-      const minutes = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60);
-      return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-    }
 
     function loadSong(index) {
       $songTitle.text(playlist[index].title);
@@ -92,40 +138,9 @@
       }
     }
 
-    function updateProgress() {
-      const currentTime = audio.currentTime;
-      const duration = audio.duration;
-      $progress.css("width", `${(currentTime / duration) * 100}%`);
-      $nowDisplay.text(formatTime(currentTime));
-    }
-
     $audioPlayer.on("ended", function () {
       currentIndex = (currentIndex + 1) % playlist.length;
       loadSong(currentIndex);
-    });
-
-    $audioPlayer.on("durationchange", function () {
-      $totalDisplay.text(formatTime(audio.duration));
-    });
-
-    $audioPlayer.on("timeupdate", updateProgress);
-
-    $progressContainer.on("click", function (e) {
-      const width = $progressContainer.width();
-      const clickX = e.offsetX;
-      const duration = audio.duration;
-      audio.currentTime = (clickX / width) * duration;
-    });
-
-    $playButton.on("click", function () {
-      if (isPlaying) {
-        audio.pause();
-        $playButton.html('<i class="fas fa-play"></i>');
-      } else {
-        audio.play();
-        $playButton.html('<i class="fas fa-pause"></i>');
-      }
-      isPlaying = !isPlaying;
     });
 
     $nextButton.on("click", function () {
@@ -136,6 +151,17 @@
     $prevButton.on("click", function () {
       currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
       loadSong(currentIndex);
+    });
+
+    $playButton.on("click", () => {
+      if (isPlaying) {
+        audio.pause();
+        $playButton.html('<i class="fas fa-play"></i>');
+      } else {
+        audio.play();
+        $playButton.html('<i class="fas fa-pause"></i>');
+      }
+      isPlaying = !isPlaying;
     });
 
     // Initialize with the first song
