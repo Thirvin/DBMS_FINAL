@@ -147,17 +147,12 @@
     
     const $audioPlayer = $("#audio-player");
     const audio = $audioPlayer[0];
-    const $nowDisplay = $("#now-display");
-    const $totalDisplay = $("#total-display");
-    const $albumCover = $("#album-cover");
-    const $songTitle = $("#song-title");
-    const $artistTitle = $("#artist-title");
 
     function loadSong(index) {
-      $songTitle.text(playlist[index].title);
-      $artistTitle.text(playlist[index].artist);
       $audioPlayer.attr("src", playlist[index].audio_url);
-      $albumCover.attr("src", playlist[index].thumbnail_url);
+      $("#song-title").text(playlist[index].title);
+      $("#artist-title").text(playlist[index].artist);
+      $("#album-cover").attr("src", playlist[index].thumbnail_url);
       if (isPlaying) {
         audio.play();
       }
@@ -170,14 +165,14 @@
     }
 
     $audioPlayer.on("durationchange", () => {
-      $totalDisplay.text(formatTime(audio.duration));
+      $("#total-display").text(formatTime(audio.duration));
     });
 
     $audioPlayer.on("timeupdate", () => {
       const currentTime = audio.currentTime;
       const duration = audio.duration;
       $progress.css("width", `${(currentTime / duration) * 100}%`);
-      $nowDisplay.text(formatTime(currentTime));
+      $("#now-display");.text(formatTime(currentTime));
     });
 
     $audioPlayer.on("ended", function () {
