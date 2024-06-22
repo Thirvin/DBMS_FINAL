@@ -10,8 +10,9 @@
     <div class="title">
       <div><i class="fas fa-chevron-left"></i></div>
       <div>NOW PLAYING</div>
-      <div><i class="fas fa-ellipsis-v"></i></div>
+      <div id="playlist-button"><i class="fas fa-ellipsis-v"></i></div>
     </div>
+
     <div class="album-cover">
       <div class="album-overlay"></div>
       <img id="album-cover"
@@ -25,6 +26,7 @@
         </h3>
       </div>
     </div>
+
     <div class="buttons">
       <button class="btn lg red neu" id="fav-button"><i class="fas fa-heart"></i></button>
       <button class="btn lg neu" id="prev-button"><i class="fas fa-backward"></i></button>
@@ -35,6 +37,7 @@
     <audio id="audio-player"></audio>
 
     <div style="padding-top: 1em;"></div>
+
     <div class="track-container">
       <div class="track neu" id="progress-container">
         <div id="progress"></div>
@@ -45,39 +48,6 @@
         <div id="total-display" class="time-display">0:00</div>
       </div>
     </div>
-    <script>
-      const $audioPlayer = $("#audio-player");
-      const audio = $audioPlayer[0];
-      const $playButton = $("#play-button");
-      const $progressContainer = $("#progress-container");
-      const $progress = $("#progress");
-      const $nowDisplay = $("#now-display");
-      const $totalDisplay = $("#total-display");
-
-      function formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-      }
-
-      $audioPlayer.on("durationchange", () => {
-        $totalDisplay.text(formatTime(audio.duration));
-      });
-  
-      $audioPlayer.on("timeupdate", () => {
-        const currentTime = audio.currentTime;
-        const duration = audio.duration;
-        $progress.css("width", `${(currentTime / duration) * 100}%`);
-        $nowDisplay.text(formatTime(currentTime));
-      });
-
-      $progressContainer.on("click", (e) => {
-        const width = $progressContainer.width();
-        const clickX = e.offsetX;
-        const duration = audio.duration;
-        audio.currentTime = (clickX / width) * duration;
-      });
-    </script>
 
     <div style="padding-top: 1em;"></div>
     <div class="sound-container">
@@ -89,24 +59,31 @@
         <div id="sound-bar"></div>
       </div>
     </div>
-    <script>
-      const $soundbarContainer = $("#soundbar-container");
-      const $soundbar = $("#sound-bar");
-      const $soundDisplay = $("#sound-display");
-
-      $soundbarContainer.on("click", (e) => {
-        const width = $soundbarContainer.width();
-        const clickX = e.offsetX * 1.05;
-        const volume = Math.min(clickX / width, 1);
-        $soundbar.css("width", `${ volume * 100 }%`);
-        audio.volume = volume;
-        $soundDisplay.text(`${ Math.round(volume * 100) }%`);
-      });
-    </script>
     <!-- <div class="lyrics">
         <i class="fas fa-angle-up"></i>
         <span>LYRICS</span>
       </div> -->
+  </div>
+
+  <div class="neu playlist song-list">
+    <div class="title">
+      <div>PLAY LIST</div>
+    </div>
+    <!-- <div class="song-list"> -->
+      {% for song in playlist_data %}
+      <button class="song neu-s" data-count="{{ loop.index0 }}">
+        <img src="{{ song.thumbnail_url }}" alt="{{ song.title }}">
+        <div class="song-text">
+          <h2 class="song-title">
+            {{ song.title }}
+          </h2>
+          <h3 class="artist-title">
+            {{ song.artist }}
+          </h3>
+        </div>
+      </button>
+      {% endfor %}
+    <!-- </div> -->
   </div>
 </div>
 
@@ -120,15 +97,61 @@
   // TODO: show all song in playlist
   // TODO: add song
   $(document).ready(function () {
+
     let playlist = {{ playlist_data | tojson }};
     let currentIndex = 0;
+    let isPlaying = false;
+
+    // 音量控制
+
+    const $soundbarContainer = $("#soundbar-container");
+    const $soundbar = $("#sound-bar");
+    const $soundDisplay = $("#sound-display");
+
+    $soundbarContainer.on("click", (e) => {
+      const width = $soundbarContainer.width();
+      const clickX = e.offsetX * 1.05;
+      const volume = Math.min(clickX / width, 1);
+      $soundbar.css("width", `${ volume * 100 }%`);
+      audio.volume = volume;
+      $soundDisplay.text(`${ Math.round(volume * 100) }%`);
+    });
+
+    // 進度條控制
+
+    const $progressContainer = $("#progress-container");
+    const $progress = $("#progress");
+
+    $progressContainer.on("click", (e) => {
+      const width = $progressContainer.width();
+      const clickX = e.offsetX;
+      const duration = audio.duration;
+      audio.currentTime = (clickX / width) * duration;
+    });
+
+    // 播放清單管理
+
+    const $playlist = $(".playlist");
+
+    function playlistVisibility() {
+      if($playlist.css("display") === "none") {
+        $playlist.css("display", "flex");
+      } else {
+        $playlist.css("display", "none");
+      }
+    } 
+
+    $("#playlist-button").on("click", playlistVisibility);
+
+    // 音樂播放器
+    
     const $audioPlayer = $("#audio-player");
+    const audio = $audioPlayer[0];
+    const $nowDisplay = $("#now-display");
+    const $totalDisplay = $("#total-display");
     const $albumCover = $("#album-cover");
     const $songTitle = $("#song-title");
     const $artistTitle = $("#artist-title");
-    const $nextButton = $("#next-button");
-    const $prevButton = $("#prev-button");
-    let isPlaying = false;
 
     function loadSong(index) {
       $songTitle.text(playlist[index].title);
@@ -140,20 +163,49 @@
       }
     }
 
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    $audioPlayer.on("durationchange", () => {
+      $totalDisplay.text(formatTime(audio.duration));
+    });
+
+    $audioPlayer.on("timeupdate", () => {
+      const currentTime = audio.currentTime;
+      const duration = audio.duration;
+      $progress.css("width", `${(currentTime / duration) * 100}%`);
+      $nowDisplay.text(formatTime(currentTime));
+    });
+
     $audioPlayer.on("ended", function () {
       currentIndex = (currentIndex + 1) % playlist.length;
       loadSong(currentIndex);
     });
 
-    $nextButton.on("click", function () {
+    // 按鈕處理
+
+    $("#next-button").on("click", function () {
       currentIndex = (currentIndex + 1) % playlist.length;
       loadSong(currentIndex);
     });
 
-    $prevButton.on("click", function () {
+    $("#prev-button").on("click", function () {
       currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
       loadSong(currentIndex);
     });
+
+    $(".song").on("click", function () {
+      const index = $(this).data("count");
+      currentIndex = index;
+      loadSong(index);
+    });
+
+    // 播放暫停按鈕
+
+    const $playButton = $("#play-button");
 
     $playButton.on("click", () => {
       if (isPlaying) {
