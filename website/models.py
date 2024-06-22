@@ -7,12 +7,9 @@ from sqlalchemy.sql import func
 
 class Music(db.Model):
     __tablename__ = 'Music'
-    id = db.Column(db.string(1000), primary_key=True, autoincrement=True)
-    M_type = db.Column(db.String(50))
+    id = db.Column(db.String(1000), primary_key=True)
     M_title = db.Column(db.String(10000), nullable=False)
     audio_url = db.Column(db.String(10000))
-    thumbnail_url = db.Column(db.String(10000))
-    SW_id = db.Column(db.Integer, db.ForeignKey('SongWriter.SW_id'))
 
 
 class User(db.Model, UserMixin):

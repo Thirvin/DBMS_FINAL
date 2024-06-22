@@ -78,8 +78,8 @@ def register():
     return render_template("sigh-up.html",user = current_user)
 
 
-@auth.route('/search', methods=['POST'])
-def search():
+@auth.route('/search_url', methods=['POST'])
+def search_url():
     print(dict(request.form))
     youtube_url = request.form['search_query']
     ydl_opts = {
@@ -91,20 +91,36 @@ def search():
             'preferredquality': '192',
         }],
     }
-    audio_url = ""
+	
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(youtube_url, download=False)
         audio_url = info_dict['url']
         title = info_dict['title']
         id = info_dict['id']
-        print(audio_url)
-        new_music = Music(id = str(id),title = str(title),play_url = str(audio_url))
+        new_music = Music(id = str(id),M_title = str(title), audio_url = str(audio_url))
         if Music.query.filter_by(id=id).first() == None:
             db.session.add(new_music)
-            db.session.commit()
+            db.session.commit()	
+    music = Music.query.filter_by(id=id).first()
+    ret = dict()
+    ret['status'] = 'sucess'
+    ret['url'] = music.audio_url
+    ret['id'] = music.id
+    ret['title'] = music.M_title
+    return ret
 
-    print(current_user.email)
-    return render_template('play.html', audio_url=audio_url,user = current_user)
+@auth.route('/search_id', methods=['POST'])
+def search_id():
+    id = request.form['search_query']
+    music = Music.query.filter_by(id=id).first()
+    if music == None :
+        return {'status' : 'error'}
+    ret = dict()
+    ret['status'] = 'success'
+    ret['url'] = music.audio_url
+    ret['title'] = music.M_title
+    return ret    
+
 
 @auth.route('/play/<path:index>',methods=['GET'])
 def play(index):
