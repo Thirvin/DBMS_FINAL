@@ -149,10 +149,10 @@
     const audio = $audioPlayer[0];
 
     function loadSong(index) {
-      $audioPlayer.attr("src", playlist[index].audio_url);
       $("#song-title").text(playlist[index].title);
       $("#artist-title").text(playlist[index].artist);
       $("#album-cover").attr("src", playlist[index].thumbnail_url);
+      $audioPlayer.attr("src", playlist[index].audio_url);
       if (isPlaying) {
         audio.play();
       }
@@ -172,7 +172,7 @@
       const currentTime = audio.currentTime;
       const duration = audio.duration;
       $progress.css("width", `${(currentTime / duration) * 100}%`);
-      $("#now-display");.text(formatTime(currentTime));
+      $("#now-display").text(formatTime(currentTime));
     });
 
     $audioPlayer.on("ended", function () {
@@ -195,6 +195,7 @@
     $(".song").on("click", function () {
       const index = $(this).data("count");
       currentIndex = index;
+      isPlaying = true;
       loadSong(index);
     });
 
