@@ -152,3 +152,17 @@ def play(index):
 
     return render_template('play.html', playlist_data=playlist_data, user = current_user)
 
+@auth.route("/creat_playlist", methods=['POST'])
+def creat_playlist():
+	if request.method == 'POST':
+		playlist_name = request.form.get('name')
+		playlist_type = request.form.get('type')
+		if playlist_name:
+			new_playlist = PlayList(P_title=playlist_name, P_type=playlist_type, UID=current_user.UID)
+			db.session.add(new_playlist)
+			db.session.commit()
+			flash("Playlist created successfully!", category="success")
+			return new_playlist.P_id
+		else:
+			flash("Playlist name cannot be empty!", category="error")
+
