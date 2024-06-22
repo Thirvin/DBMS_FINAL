@@ -188,6 +188,10 @@ def remove_music_from_playlist():
 		Which_playlist = request.form.get('playlist_id')
 		if Which_playlist and Which_music_to_remove:
 			obj = InWhichPlaylist(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.UID)
+			is_exist = InWhichPlaylist.query.filter_by(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.UID).first()
+			if not is_exist:
+				flash("the object does not exist", category="error")
+				return "error"
 			db.session.delete(obj)
 			db.commit()
 			flash("music removed successfully!", category='success')
