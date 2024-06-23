@@ -8,13 +8,13 @@ from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 import yt_dlp
 auth = Blueprint('auth', __name__)
-urls = [[
+urls = [1,1,[
     'https://youtu.be/ovTiSA9T-RU?si=H5r_oO7-tboMBeYB',
     'https://youtu.be/kkUWlcjmOew?si=LYhySQt4XrsUFOxP',
     'https://www.youtube.com/watch?v=ve6SQ3V8BSw'
 ]]
 def get_URL_from_index(index):
-    return urls[int(index)] 
+    return urls[int(index)]
 
 
 @auth.route("/login", methods=['GET', 'POST'])
@@ -85,7 +85,7 @@ def search_url():
     print(dict(request.form))
     youtube_url = request.form['search_query']
     ydl_opts = {
-        'extract_flat': True,  
+        'extract_flat': True,
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -93,16 +93,18 @@ def search_url():
             'preferredquality': '192',
         }],
     }
-	
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(youtube_url, download=False)
         audio_url = info_dict['url']
         title = info_dict['title']
         id = info_dict['id']
-        new_music = Music(id = str(id),M_title = str(title), audio_url = str(audio_url))
+        thumbnail_url =  max(info_dict['thumbnails'], key=lambda x: x['preference'])['url']
+        artist = info_dict['uploader']
+        new_music = Music(id = str(id),M_title = str(title), audio_url = str(audio_url), thumbnail_url = str(thumbnail_url), artist=str(artist))
         if Music.query.filter_by(id=id).first() == None:
             db.session.add(new_music)
-            db.session.commit()	
+            db.session.commit()
     music = Music.query.filter_by(id=id).first()
     ret = dict()
     ret['status'] = 'sucess'
@@ -121,35 +123,20 @@ def search_id():
     ret['status'] = 'success'
     ret['url'] = music.audio_url
     ret['title'] = music.M_title
-    return ret    
+    return ret
 
 
 @auth.route('/play/<path:index>',methods=['GET'])
 def play(index):
-    youtube_urls = get_URL_from_index(index)
-
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'webm',
-            'preferredquality': '192',
-        }],
-    }
-
+    playlist = InWhichPlaylist.query.filter_by(P_id = index).all()
     info_list = []
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        for youtube_url in youtube_urls:
-            info = ydl.extract_info(youtube_url, download=False)
-            print()
-            info_list.append(info)
-
     playlist_data = []
-    for info in info_list:
-        title = info['title']
-        artist = info['uploader']
-        audio_url = info['url']
-        thumbnail_url = max(info['thumbnails'], key=lambda x: x['preference'])['url']
+    for music in playlist:
+        data = Music.query.filter_by(id = music.M_id).first()
+        title = data.M_title
+        artist = data.artist
+        audio_url = data.audio_url
+        thumbnail_url = data.thumbnail_url
         playlist_data.append({'title': title, 'artist': artist, 'audio_url': audio_url, 'thumbnail_url': thumbnail_url})
 
     return render_template('play.html', playlist_data=playlist_data, user = current_user)
@@ -166,11 +153,9 @@ def creat_playlist():
 			db.session.add(new_playlist)
 			db.session.commit()
 			ret['id'] = new_playlist.P_id
-			flash("Playlist created successfully!", category="success")
 			return ret
 		else:
 			ret['status'] = 'success'
-			flash("Playlist name cannot be empty", category="error")
 			return ret
 
 @auth.route("/add_music_to_playlist", methods=['POST'])
@@ -180,11 +165,17 @@ def add_music_to_playlist():
 		which_music_id = request.form.get('music_id')
 		ret = dict()
 		if which_music_id and which_playlist_id:
-			ret['status'] = 'success'
+			print(which_music_id)
+			is_song_exist = Music.query.filter_by(id = which_music_id).first()
+			is_already_exist = InWhichPlaylist.query.filter_by(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.id).first()
+			if not is_song_exist or  is_already_exist != None:
+				ret['status'] = 'error'
+				return ret
+
 			new_music_added_to_playlist = InWhichPlaylist(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.id)
 			db.session.add(new_music_added_to_playlist)
 			db.session.commit()
-			flash("music added successfully!", category="success")
+			ret['status'] = 'success'
 			return ret
 		else:
 			ret['status'] = 'error'
@@ -193,23 +184,21 @@ def add_music_to_playlist():
 
 @auth.route("/remove_music_from_playlist", methods=['POST'])
 def remove_music_from_playlist():
-	if request.form.method == "POST":
+	if request.method == "POST":
+		ret = dict()
 		Which_music_to_remove = request.form.get('music_id')
 		Which_playlist = request.form.get('playlist_id')
 		if Which_playlist and Which_music_to_remove:
 			ret['status'] = 'success'
-			obj = InWhichPlaylist(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.id)
-			is_exist = InWhichPlaylist.query.filter_by(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.id).first()
-			if not is_exist:
-				flash("the object does not exist", category="error")
-				return "error"
-			db.session.delete(obj)
-			db.commit()
-			flash("music removed successfully!", category='success')
+			tar = InWhichPlaylist.query.filter_by(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.id).first()
+			if not tar:
+				ret['status'] = 'error'
+				return ret
+			db.session.delete(tar)
+			db.session.commit()
 			return ret
 		else:
 			ret['status'] = 'error'
-			flash("music id or playlist id can not be empty and the chosen music id must include in playlist", category="error")
 			return ret
 @auth.route("/test", methods = ['GET'])
 def test():

@@ -10,6 +10,8 @@ class Music(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
     M_title = db.Column(db.String(10000), nullable=False)
     audio_url = db.Column(db.String(10000))
+    thumbnail_url =  db.Column(db.String(10000))
+    artist = db.Column(db.String(10000))
 
 
 class User(db.Model, UserMixin):

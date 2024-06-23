@@ -27,6 +27,17 @@
         <br><br>
         <input type="submit" value="Add Music to Playlist">
     </form>
+
+    <h1>Remove Music from Playlist</h1>
+    <form action="/remove_music_from_playlist" method="POST">
+        <label for="playlist_id">Playlist ID:</label>
+        <input type="text" id="playlist_id" name="playlist_id" required>
+        <br><br>
+        <label for="music_id">Music ID:</label>
+        <input type="text" id="music_id" name="music_id" required>
+        <br><br>
+        <input type="submit" value="Remove Music from Playlist">
+    </form>
 </body>
 </html>
 
