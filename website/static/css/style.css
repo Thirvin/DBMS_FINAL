@@ -25,9 +25,7 @@ body {
 }
 
 .iphone .screen {
-  display: flex;
-  flex-direction: row;
-  object-position: center;
+  flex-direction: column;
 }
 
 .title {
@@ -146,10 +144,10 @@ body {
   height: 660px;
   background: #B8BDC3;
   border-radius: 2em;
-  margin-left: 2em;
+  margin-left: 1em;
   box-sizing: border-box;
   padding: 1em;
-  display: flex;
+  display: none;
   flex-direction: column;
   overflow-y: auto;
   -ms-overflow-style: none;

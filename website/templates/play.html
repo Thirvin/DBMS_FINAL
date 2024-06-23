@@ -8,9 +8,9 @@
 <div class="container">
   <div class="iphone neu">
     <div class="title">
-      <div><i class="fas fa-chevron-left"></i></div>
+      <!-- <div><i class="fas fa-ellipsis-v"></i></div> -->
       <div>NOW PLAYING</div>
-      <div id="playlist-button"><i class="fas fa-ellipsis-v"></i></div>
+      <!-- <div id="playlist-button"><i class="fas fa-chevron-right"></i></div> -->
     </div>
 
     <div class="album-cover">
@@ -63,6 +63,10 @@
         <i class="fas fa-angle-up"></i>
         <span>LYRICS</span>
       </div> -->
+  </div>
+
+  <div style="margin-left: 1em;">
+    <div id="playlist-button"><i class="fas fa-chevron-right"></i></div>
   </div>
 
   <div class="neu playlist song-list">
@@ -132,12 +136,15 @@
     // 播放清單管理
 
     const $playlist = $(".playlist");
+    const $playlistButton = $("#playlist-button");
 
     function playlistVisibility() {
       if($playlist.css("display") === "none") {
         $playlist.css("display", "flex");
+        $playlistButton.html('<i class="fas fa-chevron-left"></i>');
       } else {
         $playlist.css("display", "none");
+        $playlistButton.html('<i class="fas fa-chevron-right"></i>');
       }
     } 
 
@@ -165,6 +172,7 @@
           }
         });
       });
+      $("#play-button").html('<i class="fas fa-pause"></i>');
     }
 
     function loadSong(index) {
@@ -220,15 +228,12 @@
 
     // 播放暫停按鈕
 
-    const $playButton = $("#play-button");
-
-    $playButton.on("click", () => {
+    $("#play-button").on("click", () => {
       if (isPlaying) {
         audio.pause();
-        $playButton.html('<i class="fas fa-play"></i>');
+        $("#play-button").html('<i class="fas fa-play"></i>');
       } else {
         playSong();
-        $playButton.html('<i class="fas fa-pause"></i>');
       }
       isPlaying = !isPlaying;
     });
