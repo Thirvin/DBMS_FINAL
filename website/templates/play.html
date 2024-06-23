@@ -212,9 +212,7 @@
           if(response.status === 'error') {
             return alert('添加音樂失敗，請重試: ' + response.reason);
           }
-          console.log(response);
           playlist.push(data);
-          console.log(playlist);
           $(".songlist").append(`
             <button class="song neu-s" data-count="${playlist.length - 1}">
               <img src="${data.thumbnail_url}" alt="${data.title}">
@@ -306,7 +304,6 @@
 
     $(".song-list").on("click", ".song", function () {
       const index = $(this).data("count");
-      console.log(index);
       currentIndex = index;
       isPlaying = true;
       loadSong(index);

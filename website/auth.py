@@ -85,7 +85,6 @@ def register():
 @auth.route('/search_url', methods=['POST'])
 def search_url():
     youtube_url = request.form['search_query']
-    print(request.form)
     ydl_opts = {
         'extract_flat': True,
         'format': 'bestaudio/best',
@@ -103,14 +102,12 @@ def search_url():
         r = url.find("&",l)
         expire_time = int(url[l+7:r])
         current_time = time.time()
-        print(expire_time,current_time)
         if current_time > expire_time:
             is_update = True
     if music == None or is_update:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(youtube_url, download=False)
             audio_url = info_dict['url']
-            print(audio_url)
             title = info_dict['title']
             id = info_dict['id']
             thumbnail_url =  max(info_dict['thumbnails'], key=lambda x: x['preference'])['url']
@@ -214,7 +211,6 @@ def creat_playlist():
 def add_music_to_playlist():
 	if request.method == 'POST':
 		ret = dict()
-		print(request.form)
 		if current_user.is_anonymous:
 			ret['status'] = 'error'
 			ret['reason'] = 'not login'
