@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+import time
 from .models import User
 from .models import Music
 from .models import Playlist
@@ -94,17 +95,32 @@ def search_url():
         }],
     }
     music = Music.query.filter_by(original_url = youtube_url).first()
-    if music == None:
+    is_update = False
+    if music != None:
+        url = music.audio_url
+       	l = url.find("expire")
+        r = url.find("&",l)
+        expire_time = int(url[l+7:r])
+        current_time = time.time()
+        print(expire_time,current_time)
+        if current_time > expire_time:
+            is_update = True
+    if music == None or is_update:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(youtube_url, download=False)
             audio_url = info_dict['url']
+            print(audio_url)
             title = info_dict['title']
             id = info_dict['id']
             thumbnail_url =  max(info_dict['thumbnails'], key=lambda x: x['preference'])['url']
             artist = info_dict['uploader']
             new_music = Music(id = str(id),M_title = str(title), audio_url = str(audio_url), thumbnail_url = str(thumbnail_url), artist=str(artist), original_url = youtube_url)
-            if Music.query.filter_by(id=id).first() == None:
+            tar =  Music.query.filter_by(id=id).first()  
+            if tar == None:
                 db.session.add(new_music)
+                db.session.commit()
+            else:
+                tar.audio_url = audio_url  
                 db.session.commit()
     music = Music.query.filter_by(original_url = youtube_url).first()
     ret = dict()
@@ -130,7 +146,7 @@ def search_id():
 @auth.route('/play/<path:index>',methods=['GET'])
 def play(index):
     playlist = InWhichPlaylist.query.filter_by(P_id = index).all()
-    info_list = []
+ 
     playlist_data = []
     for music in playlist:
         data = Music.query.filter_by(id = music.M_id).first()
