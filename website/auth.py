@@ -190,6 +190,10 @@ def play(index):
 def creat_playlist():
 	if request.method == 'POST':
 		ret = dict()
+		if current_user.is_anonymous:
+			ret['status'] = 'error'
+			return ret
+		
 		playlist_name = request.form.get('name')
 		playlist_type = request.form.get('type')
 		if playlist_name:
@@ -206,9 +210,13 @@ def creat_playlist():
 @auth.route("/add_music_to_playlist", methods=['POST'])
 def add_music_to_playlist():
 	if request.method == 'POST':
+		ret = dict()
+		if current_user.is_anonymous:
+			ret['status'] = 'error'
+			return ret
+		
 		which_playlist_id = request.form.get('playlist_id')
 		which_music_id = request.form.get('music_id')
-		ret = dict()
 		if which_music_id and which_playlist_id:
 			print(which_music_id)
 			is_song_exist = Music.query.filter_by(id = which_music_id).first()
@@ -231,6 +239,9 @@ def add_music_to_playlist():
 def remove_music_from_playlist():
 	if request.method == "POST":
 		ret = dict()
+		if current_user.is_anonymous():
+			ret['status'] = 'error'
+			return ret
 		Which_music_to_remove = request.form.get('music_id')
 		Which_playlist = request.form.get('playlist_id')
 		if Which_playlist and Which_music_to_remove:
