@@ -259,3 +259,13 @@ def remove_music_from_playlist():
 @auth.route("/test", methods = ['GET'])
 def test():
 	return render_template("test.html",user = current_user)
+
+@auth.route("/get_all_list", methods = ['POST'])
+def get_all_list():
+	if current_user.is_anonymous:
+		return {"status" : "error"}
+	playlists = Playlist.query.filter_by(UID=current_user.id).all()
+	ret = {'datas' : []}
+	for data in playlists:
+		ret['datas'].append({'id' : data.P_id, 'title' : data.P_title})
+	return ret
