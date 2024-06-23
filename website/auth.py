@@ -152,3 +152,50 @@ def play(index):
 
     return render_template('play.html', playlist_data=playlist_data, user = current_user)
 
+@auth.route("/creat_playlist", methods=['POST'])
+def creat_playlist():
+	if request.method == 'POST':
+		playlist_name = request.form.get('name')
+		playlist_type = request.form.get('type')
+		if playlist_name:
+			new_playlist = PlayList(P_title=playlist_name, P_type=playlist_type, UID=current_user.UID)
+			db.session.add(new_playlist)
+			db.session.commit()
+			flash("Playlist created successfully!", category="success")
+			return new_playlist.P_id
+		else:
+			flash("Playlist name cannot be empty", category="error")
+
+@auth.route("/add_music_to_playlist", method=['POST'])
+def add_music_to_playlist():
+	if request.method == 'POST':
+		which_playlist_id = request.form.get('playlist_id')
+		which_music_id = request.form.get('music_id')
+		if which_music_id and which_playlist_id:
+			new_music_added_to_playlist = InWhichPlaylist(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.UID)
+			db.session.add(new_music_added_to_playlist)
+			db.session.commit()
+			flash("music added successfully!", category="success")
+			return "success"
+		else:
+			flash("music id or playlist id can't be empty", category="error")
+			return "error"
+
+@auth.route("/remove_music_from_playlist", method['POST'])
+def remove_music_from_playlist():
+	if request.form.method == "POST":
+		Which_music_to_remove = request.form.get('music_id')
+		Which_playlist = request.form.get('playlist_id')
+		if Which_playlist and Which_music_to_remove:
+			obj = InWhichPlaylist(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.UID)
+			is_exist = InWhichPlaylist.query.filter_by(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.UID).first()
+			if not is_exist:
+				flash("the object does not exist", category="error")
+				return "error"
+			db.session.delete(obj)
+			db.commit()
+			flash("music removed successfully!", category='success')
+			return "success"
+		else:
+			flash("music id or playlist id can not be empty and the chosen music id must include in playlist", category="error")
+			return "error"
