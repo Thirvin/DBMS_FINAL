@@ -144,10 +144,17 @@ body {
   height: 660px;
   background: #B8BDC3;
   border-radius: 2em;
-  margin-left: 1em;
   box-sizing: border-box;
-  padding: 1em;
+  /* padding: 1em; */
+  padding-top: 2em;
+  padding-bottom: 2em;
   display: none;
+  flex-direction: column;
+}
+
+.songlist {
+  width: 312px;
+  display: flex;
   flex-direction: column;
   overflow-y: auto;
   -ms-overflow-style: none;
@@ -164,9 +171,12 @@ body {
 }
 
 .playlist .song {
+  margin-left: 1em;
+  margin-right: 1em;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: left;
+  align-items: center;
   margin-bottom: 1em;
 }
 
@@ -198,6 +208,57 @@ body {
   font-size: 0.75em;
   color: #65717e;
 }
+
+
+
+/* Modal Header */
+.modal-header {
+  padding: 8px 16px;
+  align-items: center;
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 8px 16px;
+}
+
+.modal-body .form-control::placeholder {
+  color: #BBBFC4;
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 8px 16px;
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 90%;
+  border-radius: 0.75em;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+.modal-footer .btn {
+  padding: 10px 20px;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+}
+
+/* Add Animation */
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
+}
+
+
 
 .neu-s {
   box-shadow: -5px -5px 15px 0px #ffffff9e, 5px 5px 15px 0px #a3b1c6a8;

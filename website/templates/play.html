@@ -4,13 +4,38 @@
 
 {% block content %}
 <!-- 參考網址 https://codepen.io/Nirtz89/pen/abzyjYz -->
+
 <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+
+<!-- The Modal -->
+<div id="input-modal" class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">新增音樂：請輸入連結</h5>
+        <div class="btn-close" data-bs-dismiss="modal"><i class="fas fa-times"></i></div>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">URL:</label>
+            <input type="text" class="form-control" id="recipient-name" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="add-music" data-bs-dismiss="modal">加入音樂</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Player container -->
 <div class="container">
   <div class="iphone neu">
     <div class="title">
-      <!-- <div><i class="fas fa-ellipsis-v"></i></div> -->
       <div>NOW PLAYING</div>
-      <!-- <div id="playlist-button"><i class="fas fa-chevron-right"></i></div> -->
     </div>
 
     <div class="album-cover">
@@ -65,28 +90,32 @@
       </div> -->
   </div>
 
-  <div style="margin-left: 1em;">
+  <div style="margin: 1em;">
     <div id="playlist-button"><i class="fas fa-chevron-right"></i></div>
   </div>
 
   <div class="neu playlist song-list">
     <div class="title">
+      <div id="playlist-list"><i class="fas fa-list"></i></div>
       <div>PLAY LIST</div>
+      <div id="playlist-add"><i class="fas fa-plus"></i></div>
     </div>
     <!-- <div class="song-list"> -->
-      {% for song in playlist_data %}
-      <button class="song neu-s" data-count="{{ loop.index0 }}">
-        <img src="{{ song.thumbnail_url }}" alt="{{ song.title }}">
-        <div class="song-text">
-          <h2 class="song-title">
-            {{ song.title }}
-          </h2>
-          <h3 class="artist-title">
-            {{ song.artist }}
-          </h3>
-        </div>
-      </button>
-      {% endfor %}
+      <div class="songlist">
+        {% for song in playlist_data %}
+        <button class="song neu-s" data-count="{{ loop.index0 }}">
+          <img src="{{ song.thumbnail_url }}" alt="{{ song.title }}">
+          <div class="song-text">
+            <h2 class="song-title">
+              {{ song.title }}
+            </h2>
+            <h3 class="artist-title">
+              {{ song.artist }}
+            </h3>
+          </div>
+        </button>
+        {% endfor %}
+      </div>
     <!-- </div> -->
   </div>
 </div>
@@ -149,6 +178,62 @@
     } 
 
     $("#playlist-button").on("click", playlistVisibility);
+
+    // 新增音樂
+    
+    $("#playlist-add").on("click", function() {
+      $("#input-modal").modal('show');
+    });
+
+    $("#add-music").on("click", async function() {
+      const url = $("#recipient-name").val();
+
+      if (url.trim() === '') {
+        alert('請輸入有效的 URL。');
+        return;
+      }
+
+      let data = null;
+
+      await $.ajax({
+        url: '/search_url',
+        type: 'POST',
+        data: { search_query: url },
+        success: function(response) {
+          data = response;
+        }
+      })
+
+      $.ajax({
+        url: '/add_music_to_playlist',
+        type: 'POST',
+        data: { music_id: data.id, playlist_id: {{ playlist_id }} },
+        success: function(response) {
+          if(response.status === 'error') {
+            return alert('添加音樂失敗，請重試: ' + response.reason);
+          }
+          console.log(response);
+          playlist.push(data);
+          console.log(playlist);
+          $(".songlist").append(`
+            <button class="song neu-s" data-count="${playlist.length - 1}">
+              <img src="${data.thumbnail_url}" alt="${data.title}">
+              <div class="song-text">
+                <h2 class="song-title">
+                  ${data.title}
+                </h2>
+                <h3 class="artist-title">
+                  ${data.artist}
+                </h3>
+              </div>
+            </button>
+          `);
+        },
+        error: function(error) {
+          alert('添加音樂失敗，請重試。');
+        }
+      });
+    });
 
     // 音樂播放器
     
@@ -219,8 +304,9 @@
       loadSong(currentIndex);
     });
 
-    $(".song").on("click", function () {
+    $(".song-list").on("click", ".song", function () {
       const index = $(this).data("count");
+      console.log(index);
       currentIndex = index;
       isPlaying = true;
       loadSong(index);

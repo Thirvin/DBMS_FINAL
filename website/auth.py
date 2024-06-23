@@ -85,6 +85,7 @@ def register():
 @auth.route('/search_url', methods=['POST'])
 def search_url():
     youtube_url = request.form['search_query']
+    print(request.form)
     ydl_opts = {
         'extract_flat': True,
         'format': 'bestaudio/best',
@@ -126,8 +127,10 @@ def search_url():
     music = Music.query.filter_by(original_url = youtube_url).first()
     ret = dict()
     ret['status'] = 'sucess'
-    ret['url'] = music.audio_url
+    ret['audio_url'] = music.audio_url
     ret['id'] = music.id
+    ret['thumbnail_url'] = music.thumbnail_url
+    ret['artist'] = music.artist
     ret['title'] = music.M_title
     return ret
 
@@ -184,7 +187,7 @@ def play(index):
         thumbnail_url = data.thumbnail_url
         playlist_data.append({'title': title, 'artist': artist, 'audio_url': audio_url, 'thumbnail_url': thumbnail_url, 'id': id})
 
-    return render_template('play.html', playlist_data=playlist_data, user = current_user)
+    return render_template('play.html', playlist_data=playlist_data, user = current_user, playlist_id = index)
 
 @auth.route("/creat_playlist", methods=['POST'])
 def creat_playlist():
@@ -211,18 +214,20 @@ def creat_playlist():
 def add_music_to_playlist():
 	if request.method == 'POST':
 		ret = dict()
+		print(request.form)
 		if current_user.is_anonymous:
 			ret['status'] = 'error'
+			ret['reason'] = 'not login'
 			return ret
 		
 		which_playlist_id = request.form.get('playlist_id')
 		which_music_id = request.form.get('music_id')
 		if which_music_id and which_playlist_id:
-			print(which_music_id)
 			is_song_exist = Music.query.filter_by(id = which_music_id).first()
 			is_already_exist = InWhichPlaylist.query.filter_by(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.id).first()
 			if not is_song_exist or  is_already_exist != None:
 				ret['status'] = 'error'
+				ret['reason'] = 'music id not exist or music already in playlist'
 				return ret
 
 			new_music_added_to_playlist = InWhichPlaylist(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.id)
@@ -232,6 +237,7 @@ def add_music_to_playlist():
 			return ret
 		else:
 			ret['status'] = 'error'
+			ret['reason'] = 'music id or playlist id can\'t be empty'
 			flash("music id or playlist id can't be empty", category="error")
 			return ret
 
