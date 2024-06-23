@@ -14,7 +14,7 @@ class Music(db.Model):
 
 class User(db.Model, UserMixin):
     __tablename__ = 'User'
-    UID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     first_name = db.Column(db.String(150), nullable=False)
@@ -29,7 +29,7 @@ class Playlist(db.Model):
     P_title = db.Column(db.String(100), nullable=False)
     P_size = db.Column(db.Integer)
     is_private = db.Column(db.Boolean, default=True)
-    UID = db.Column(db.Integer, db.ForeignKey('User.UID'))
+    UID = db.Column(db.Integer, db.ForeignKey('User.id'))
 
 
 class SongWriter(db.Model):
@@ -42,5 +42,5 @@ class InWhichPlaylist(db.Model):
     __tablename__ = 'InWhichPlaylist'
     M_id = db.Column(db.Integer, db.ForeignKey('Music.id'), primary_key=True)
     P_id = db.Column(db.Integer, db.ForeignKey('Playlist.P_id'), primary_key=True)
-    UID = db.Column(db.Integer, db.ForeignKey('User.UID'), primary_key=True)
+    UID = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True)
     first_name = db.Column(db.String(150))

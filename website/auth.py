@@ -67,7 +67,7 @@ def register():
                 return render_template("sigh-up.html")
 
             new_user = User(email=email, password=generate_password_hash(
-                password1, method="sha256"), first_name=firstName)
+                password1, method="pbkdf2:sha256"), first_name=firstName)
             login_user(new_user)
             db.session.add(new_user)
             db.session.commit()
