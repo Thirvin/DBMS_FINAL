@@ -155,38 +155,46 @@ def play(index):
 @auth.route("/creat_playlist", methods=['POST'])
 def creat_playlist():
 	if request.method == 'POST':
+		ret = dict()
 		playlist_name = request.form.get('name')
 		playlist_type = request.form.get('type')
 		if playlist_name:
+			ret['status'] = 'success'
+			ret['id'] = new_playlist.P_id
 			new_playlist = PlayList(P_title=playlist_name, P_type=playlist_type, UID=current_user.UID)
 			db.session.add(new_playlist)
 			db.session.commit()
 			flash("Playlist created successfully!", category="success")
-			return new_playlist.P_id
+			return ret
 		else:
+			ret['status'] = 'success'
 			flash("Playlist name cannot be empty", category="error")
+			return ret
 
-@auth.route("/add_music_to_playlist", method=['POST'])
+@auth.route("/add_music_to_playlist", methods=['POST'])
 def add_music_to_playlist():
 	if request.method == 'POST':
 		which_playlist_id = request.form.get('playlist_id')
 		which_music_id = request.form.get('music_id')
 		if which_music_id and which_playlist_id:
+			ret['status'] = 'success'
 			new_music_added_to_playlist = InWhichPlaylist(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.UID)
 			db.session.add(new_music_added_to_playlist)
 			db.session.commit()
 			flash("music added successfully!", category="success")
-			return "success"
+			return ret
 		else:
+			ret['status'] = 'error'
 			flash("music id or playlist id can't be empty", category="error")
-			return "error"
+			return ret
 
-@auth.route("/remove_music_from_playlist", method['POST'])
+@auth.route("/remove_music_from_playlist", methods=['POST'])
 def remove_music_from_playlist():
 	if request.form.method == "POST":
 		Which_music_to_remove = request.form.get('music_id')
 		Which_playlist = request.form.get('playlist_id')
 		if Which_playlist and Which_music_to_remove:
+			ret['status'] = 'success'
 			obj = InWhichPlaylist(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.UID)
 			is_exist = InWhichPlaylist.query.filter_by(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.UID).first()
 			if not is_exist:
@@ -195,7 +203,8 @@ def remove_music_from_playlist():
 			db.session.delete(obj)
 			db.commit()
 			flash("music removed successfully!", category='success')
-			return "success"
+			return ret
 		else:
+			ret['status'] = 'error'
 			flash("music id or playlist id can not be empty and the chosen music id must include in playlist", category="error")
-			return "error"
+			return ret
