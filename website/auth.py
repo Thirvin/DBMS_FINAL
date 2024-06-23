@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 import yt_dlp
+import json
 auth = Blueprint('auth', __name__)
 urls = [1,1,[
     'https://youtu.be/ovTiSA9T-RU?si=H5r_oO7-tboMBeYB',
@@ -83,7 +84,6 @@ def register():
 
 @auth.route('/search_url', methods=['POST'])
 def search_url():
-
     youtube_url = request.form['search_query']
     ydl_opts = {
         'extract_flat': True,
@@ -96,9 +96,9 @@ def search_url():
     }
     music = Music.query.filter_by(original_url = youtube_url).first()
     is_update = False
-    if music != None :
+    if music != None:
         url = music.audio_url
-       	l = url.find("expire")
+        l = url.find("expire")
         r = url.find("&",l)
         expire_time = int(url[l+7:r])
         current_time = time.time()
@@ -133,7 +133,7 @@ def search_url():
 
 @auth.route('/search_id', methods=['POST'])
 def search_id():
-    id = request.form['search_query']
+    id = json.loads(request.form.get('search_query'))['id']
     music = Music.query.filter_by(id=id).first()
     if music == None :
         return {'status' : 'error'}
@@ -142,7 +142,7 @@ def search_id():
     r = url.find("&",l)
     expire_time = int(url[l+7:r])
     current_time = time.time()
-    is_update = False
+    is_update = True
     if current_time > expire_time:
         is_update = True
     if is_update:
@@ -156,16 +156,16 @@ def search_id():
         }],
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(url, download=False)
+            youtube_url = 'https://www.youtube.com/watch?v='+id
+            info_dict = ydl.extract_info(youtube_url, download=False)
             audio_url = info_dict['url']
-            print(audio_url)
             id = info_dict['id']
             tar =  Music.query.filter_by(id=id).first()
             tar.audio_url = audio_url
             db.session.commit()
     ret = dict()
     ret['status'] = 'success'
-    ret['url'] = music.audio_url
+    ret['audio_url'] = music.audio_url
     ret['title'] = music.M_title
     return ret
 
@@ -177,11 +177,12 @@ def play(index):
     playlist_data = []
     for music in playlist:
         data = Music.query.filter_by(id = music.M_id).first()
+        id = data.id
         title = data.M_title
         artist = data.artist
         audio_url = data.audio_url
         thumbnail_url = data.thumbnail_url
-        playlist_data.append({'title': title, 'artist': artist, 'audio_url': audio_url, 'thumbnail_url': thumbnail_url})
+        playlist_data.append({'title': title, 'artist': artist, 'audio_url': audio_url, 'thumbnail_url': thumbnail_url, 'id': id})
 
     return render_template('play.html', playlist_data=playlist_data, user = current_user)
 

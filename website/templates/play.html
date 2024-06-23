@@ -148,13 +148,32 @@
     const $audioPlayer = $("#audio-player");
     const audio = $audioPlayer[0];
 
+    function playSong() {
+      audio.play().catch(error => {
+        const cur = currentIndex;
+        let searchQuery = JSON.stringify({ id: playlist[cur].id });
+        $.ajax({
+          url: '/search_id',
+          type: 'POST',
+          data: { search_query: searchQuery },
+          success: function(response) {
+            playlist[cur].audio_url = response.audio_url;
+            $audioPlayer.attr("src", response.audio_url);
+            if(cur === currentIndex) {
+              loadSong(cur);
+            }
+          }
+        });
+      });
+    }
+
     function loadSong(index) {
       $("#song-title").text(playlist[index].title);
       $("#artist-title").text(playlist[index].artist);
       $("#album-cover").attr("src", playlist[index].thumbnail_url);
       $audioPlayer.attr("src", playlist[index].audio_url);
       if (isPlaying) {
-        audio.play();
+        playSong();
       }
     }
 
@@ -208,7 +227,7 @@
         audio.pause();
         $playButton.html('<i class="fas fa-play"></i>');
       } else {
-        audio.play();
+        playSong();
         $playButton.html('<i class="fas fa-pause"></i>');
       }
       isPlaying = !isPlaying;
