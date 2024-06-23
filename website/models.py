@@ -12,7 +12,7 @@ class Music(db.Model):
     audio_url = db.Column(db.String(10000))
     thumbnail_url =  db.Column(db.String(10000))
     artist = db.Column(db.String(10000))
-
+    original_url = db.Column(db.String(10000))
 
 class User(db.Model, UserMixin):
     __tablename__ = 'User'

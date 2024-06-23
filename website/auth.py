@@ -82,7 +82,7 @@ def register():
 
 @auth.route('/search_url', methods=['POST'])
 def search_url():
-    print(dict(request.form))
+
     youtube_url = request.form['search_query']
     ydl_opts = {
         'extract_flat': True,
@@ -93,19 +93,20 @@ def search_url():
             'preferredquality': '192',
         }],
     }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(youtube_url, download=False)
-        audio_url = info_dict['url']
-        title = info_dict['title']
-        id = info_dict['id']
-        thumbnail_url =  max(info_dict['thumbnails'], key=lambda x: x['preference'])['url']
-        artist = info_dict['uploader']
-        new_music = Music(id = str(id),M_title = str(title), audio_url = str(audio_url), thumbnail_url = str(thumbnail_url), artist=str(artist))
-        if Music.query.filter_by(id=id).first() == None:
-            db.session.add(new_music)
-            db.session.commit()
-    music = Music.query.filter_by(id=id).first()
+    music = Music.query.filter_by(original_url = youtube_url).first()
+    if music == None:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(youtube_url, download=False)
+            audio_url = info_dict['url']
+            title = info_dict['title']
+            id = info_dict['id']
+            thumbnail_url =  max(info_dict['thumbnails'], key=lambda x: x['preference'])['url']
+            artist = info_dict['uploader']
+            new_music = Music(id = str(id),M_title = str(title), audio_url = str(audio_url), thumbnail_url = str(thumbnail_url), artist=str(artist), original_url = youtube_url)
+            if Music.query.filter_by(id=id).first() == None:
+                db.session.add(new_music)
+                db.session.commit()
+    music = Music.query.filter_by(original_url = youtube_url).first()
     ret = dict()
     ret['status'] = 'sucess'
     ret['url'] = music.audio_url
