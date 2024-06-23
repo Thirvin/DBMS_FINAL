@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from .models import Music
+from .models import Playlist
+from .models import InWhichPlaylist
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
@@ -160,10 +162,10 @@ def creat_playlist():
 		playlist_type = request.form.get('type')
 		if playlist_name:
 			ret['status'] = 'success'
-			ret['id'] = new_playlist.P_id
-			new_playlist = PlayList(P_title=playlist_name, P_type=playlist_type, UID=current_user.UID)
+			new_playlist = Playlist(P_title=playlist_name, P_type=playlist_type, UID=current_user.id)
 			db.session.add(new_playlist)
 			db.session.commit()
+			ret['id'] = new_playlist.P_id
 			flash("Playlist created successfully!", category="success")
 			return ret
 		else:
@@ -176,9 +178,10 @@ def add_music_to_playlist():
 	if request.method == 'POST':
 		which_playlist_id = request.form.get('playlist_id')
 		which_music_id = request.form.get('music_id')
+		ret = dict()
 		if which_music_id and which_playlist_id:
 			ret['status'] = 'success'
-			new_music_added_to_playlist = InWhichPlaylist(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.UID)
+			new_music_added_to_playlist = InWhichPlaylist(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.id)
 			db.session.add(new_music_added_to_playlist)
 			db.session.commit()
 			flash("music added successfully!", category="success")
@@ -195,8 +198,8 @@ def remove_music_from_playlist():
 		Which_playlist = request.form.get('playlist_id')
 		if Which_playlist and Which_music_to_remove:
 			ret['status'] = 'success'
-			obj = InWhichPlaylist(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.UID)
-			is_exist = InWhichPlaylist.query.filter_by(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.UID).first()
+			obj = InWhichPlaylist(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.id)
+			is_exist = InWhichPlaylist.query.filter_by(P_id=Which_playlist, M_id=Which_music_to_remove, UID=current_user.id).first()
 			if not is_exist:
 				flash("the object does not exist", category="error")
 				return "error"
@@ -208,3 +211,6 @@ def remove_music_from_playlist():
 			ret['status'] = 'error'
 			flash("music id or playlist id can not be empty and the chosen music id must include in playlist", category="error")
 			return ret
+@auth.route("/test", methods = ['GET'])
+def test():
+	return render_template("test.html",user = current_user)

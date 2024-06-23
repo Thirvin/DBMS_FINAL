@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Management</title>
+</head>
+<body>
+    <h1>Create a New Playlist</h1>
+    <form action="/creat_playlist" method="POST">
+        <label for="name">Playlist Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br><br>
+        <label for="type">Playlist Type:</label>
+        <input type="text" id="type" name="type">
+        <br><br>
+        <input type="submit" value="Create Playlist">
+    </form>
+
+    <h1>Add Music to Playlist</h1>
+    <form action="/add_music_to_playlist" method="POST">
+        <label for="playlist_id">Playlist ID:</label>
+        <input type="text" id="playlist_id" name="playlist_id" required>
+        <br><br>
+        <label for="music_id">Music ID:</label>
+        <input type="text" id="music_id" name="music_id" required>
+        <br><br>
+        <input type="submit" value="Add Music to Playlist">
+    </form>
+</body>
+</html>
+
