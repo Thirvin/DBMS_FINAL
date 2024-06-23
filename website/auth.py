@@ -96,7 +96,7 @@ def search_url():
     }
     music = Music.query.filter_by(original_url = youtube_url).first()
     is_update = False
-    if music != None:
+    if music != None :
         url = music.audio_url
        	l = url.find("expire")
         r = url.find("&",l)
@@ -115,12 +115,13 @@ def search_url():
             thumbnail_url =  max(info_dict['thumbnails'], key=lambda x: x['preference'])['url']
             artist = info_dict['uploader']
             new_music = Music(id = str(id),M_title = str(title), audio_url = str(audio_url), thumbnail_url = str(thumbnail_url), artist=str(artist), original_url = youtube_url)
-            tar =  Music.query.filter_by(id=id).first()  
+            tar =  Music.query.filter_by(id=id).first()
             if tar == None:
                 db.session.add(new_music)
                 db.session.commit()
             else:
-                tar.audio_url = audio_url  
+                tar.audio_url = audio_url
+                tar.original_url = youtube_url
                 db.session.commit()
     music = Music.query.filter_by(original_url = youtube_url).first()
     ret = dict()
@@ -136,6 +137,32 @@ def search_id():
     music = Music.query.filter_by(id=id).first()
     if music == None :
         return {'status' : 'error'}
+    url = music.audio_url
+    l = url.find("expire")
+    r = url.find("&",l)
+    expire_time = int(url[l+7:r])
+    current_time = time.time()
+    is_update = False
+    if current_time > expire_time:
+        is_update = True
+    if is_update:
+        ydl_opts = {
+        'extract_flat': True,
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'webm',
+            'preferredquality': '192',
+        }],
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=False)
+            audio_url = info_dict['url']
+            print(audio_url)
+            id = info_dict['id']
+            tar =  Music.query.filter_by(id=id).first()
+            tar.audio_url = audio_url
+            db.session.commit()
     ret = dict()
     ret['status'] = 'success'
     ret['url'] = music.audio_url
@@ -146,7 +173,7 @@ def search_id():
 @auth.route('/play/<path:index>',methods=['GET'])
 def play(index):
     playlist = InWhichPlaylist.query.filter_by(P_id = index).all()
- 
+
     playlist_data = []
     for music in playlist:
         data = Music.query.filter_by(id = music.M_id).first()
