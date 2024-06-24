@@ -96,15 +96,17 @@
 
   <div class="neu playlist song-list">
     <div class="title">
-      <div id="playlist-list"><i class="fas fa-list"></i></div>
+      <div id="playlist-list"><i class="fas fa-list fa-lg"></i></div>
       <div>PLAY LIST</div>
-      <div id="playlist-add"><i class="fas fa-plus"></i></div>
+      <div id="playlist-add"><i class="fas fa-plus fa-lg"></i></div>
     </div>
     <!-- <div class="song-list"> -->
       <div class="songlist">
         {% for song in playlist_data %}
         <button class="song neu-s" data-count="{{ loop.index0 }}">
+
           <img src="{{ song.thumbnail_url }}" alt="{{ song.title }}">
+
           <div class="song-text">
             <h2 class="song-title">
               {{ song.title }}
@@ -113,6 +115,11 @@
               {{ song.artist }}
             </h3>
           </div>
+
+          <div class="btn-delete" data-count="{{ loop.index0 }}">
+            <i class="fas fa-times red"></i>
+          </div>
+          
         </button>
         {% endfor %}
       </div>
@@ -134,6 +141,7 @@
     let playlist = {{ playlist_data | tojson }};
     let currentIndex = 0;
     let isPlaying = false;
+    let isDeleteVisible = false;
 
     // 音量控制
 
@@ -224,11 +232,46 @@
                   ${data.artist}
                 </h3>
               </div>
+              <div class="btn-delete" data-count="${playlist.length - 1}">
+                <i class="fas fa-times red"></i>
+              </div>
             </button>
           `);
         },
         error: function(error) {
           alert('添加音樂失敗，請重試。');
+        }
+      });
+    });
+
+    // 刪除音樂
+
+    $("#playlist-list").on("click", function() {
+      let deleteBtn = $(".btn-delete");
+      isDeleteVisible = !isDeleteVisible;
+      if (isDeleteVisible) {
+        deleteBtn.fadeIn();
+      } else {
+        deleteBtn.fadeOut();
+      }
+    });
+
+    $(".song-list").on("click", ".btn-delete", function() {
+      const index = $(this).data("count");
+      const song = playlist[index];
+      $.ajax({
+        url: '/remove_music_from_playlist',
+        type: 'POST',
+        data: { music_id: song.id, playlist_id: {{ playlist_id }} },
+        success: function(response) {
+          if(response.status === 'error') {
+            return alert('刪除音樂失敗，請重試: ' + response.reason);
+          }
+          playlist.splice(index, 1);
+          $(this).parent().remove();
+        },
+        error: function(error) {
+          alert('刪除音樂失敗，請重試。');
         }
       });
     });

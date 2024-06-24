@@ -173,14 +173,27 @@ body {
 .playlist .song {
   margin-left: 1em;
   margin-right: 1em;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
   flex-direction: row;
-  justify-content: left;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1em;
 }
 
-.song-list {
+.playlist .btn-delete {
+  margin-right: 1em;
+  justify-self: end;
+  display: none;
+}
+
+@keyframes fade-out {
+  from {
+      opacity: 1;
+  }
+  to {
+      opacity: 0;
+  }
 }
 
 .playlist .song-text {
