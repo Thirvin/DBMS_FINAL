@@ -1,4 +1,5 @@
 # Music Streaming Website Application
+![image](https://github.com/Thirvin/DBMS_FINAL/assets/81691080/5bac5bfb-b51b-48c2-b183-cc4d6478ed7d)
 
 ## Table of Contents
 1. [Introduction](#introduction)
