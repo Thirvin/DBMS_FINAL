@@ -12,7 +12,7 @@
 8. [Data Models](#data-models)
 9. [Security Considerations](#security-considerations)
 10. [Performance Optimization](#performance-optimization)
-
+11. [Unitest](#unitest)
 ## Introduction
 
 This is a music streaming website application developed using the Flask framework. Users can register accounts, create personal playlists, search for and play music from YouTube. The application aims to provide a simple yet feature-rich music playback platform.
@@ -133,4 +133,8 @@ python main.py
 
 - Use of SQLAlchemy ORM for efficient database queries
 - Implementation of music URL caching to reduce requests to YouTube
+
+## unitest
+![image](https://github.com/Thirvin/DBMS_FINAL/assets/81691080/cf3719b2-3efb-46ad-89c2-4cbaaf0bf189)
+![image](https://github.com/Thirvin/DBMS_FINAL/assets/81691080/94df8719-a9f9-4376-a60d-8c95a81c3d30)
 
