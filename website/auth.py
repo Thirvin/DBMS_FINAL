@@ -226,7 +226,6 @@ def add_music_to_playlist():
 				ret['reason'] = 'music id not exist or music already in playlist'
 				return ret
 			number_of_songs = len(InWhichPlaylist.query.filter_by(P_id = which_playlist_id).all())
-			print(number_of_songs)
 			if number_of_songs > current_user.limit :
 				ret['status'] = 'error'
 				ret['reason'] = 'reach the limit of songs'
@@ -244,7 +243,6 @@ def add_music_to_playlist():
 
 @auth.route("/remove_music_from_playlist", methods=['POST'])
 def remove_music_from_playlist():
-	print(request.form)
 	if request.method == "POST":
 		ret = dict()
 		if current_user.is_anonymous:
@@ -277,6 +275,7 @@ def get_all_list():
 	for data in playlists:
 		ret['datas'].append({'id' : data.P_id, 'title' : data.P_title})
 	return ret
+
 @auth.route("/remove_playlist", methods = ['POST'])
 def remove_playlist():
 	Which_list_to_remove = request.form.get('playlist_id')
@@ -286,6 +285,7 @@ def remove_playlist():
 	ret = dict()
 	ret['status'] = 'success'
 	return ret
+
 @auth.route("/increase_limit", methods=['POST'])
 def increase_limit():
     if request.method == 'POST':
