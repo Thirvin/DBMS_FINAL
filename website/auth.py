@@ -226,7 +226,7 @@ def add_music_to_playlist():
 				ret['reason'] = 'music id not exist or music already in playlist'
 				return ret
 			number_of_songs = len(InWhichPlaylist.query.filter_by(P_id = which_playlist_id).all())
-			if number_of_songs > current_user.limit :
+			if number_of_songs >= current_user.limit :
 				ret['status'] = 'error'
 				ret['reason'] = 'reach the limit of songs'
 				return ret;
