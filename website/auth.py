@@ -244,9 +244,10 @@ def add_music_to_playlist():
 
 @auth.route("/remove_music_from_playlist", methods=['POST'])
 def remove_music_from_playlist():
+	print(request.form)
 	if request.method == "POST":
 		ret = dict()
-		if current_user.is_anonymous():
+		if current_user.is_anonymous:
 			ret['status'] = 'error'
 			return ret
 		Which_music_to_remove = request.form.get('music_id')

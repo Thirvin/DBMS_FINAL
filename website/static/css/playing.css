@@ -187,15 +187,6 @@ body {
   display: none;
 }
 
-@keyframes fade-out {
-  from {
-      opacity: 1;
-  }
-  to {
-      opacity: 0;
-  }
-}
-
 .playlist .song-text {
   display: flex;
   flex-direction: column;
