@@ -22,6 +22,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150), nullable=False)
     last_name = db.Column(db.String(150))
     membership = db.Column(db.String(50))
+    limit = db.Column(db.Integer)
 
 
 class Playlist(db.Model):
@@ -46,3 +47,4 @@ class InWhichPlaylist(db.Model):
     P_id = db.Column(db.Integer, db.ForeignKey('Playlist.P_id'), primary_key=True)
     UID = db.Column(db.Integer, db.ForeignKey('User.id'), primary_key=True)
     first_name = db.Column(db.String(150))
+

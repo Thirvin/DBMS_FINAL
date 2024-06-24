@@ -71,7 +71,7 @@ def register():
                 return render_template("sigh-up.html")
 
             new_user = User(email=email, password=generate_password_hash(
-                password1, method="pbkdf2:sha256"), first_name=firstName)
+                password1, method="pbkdf2:sha256"), first_name=firstName, membership="Normal", limit = 5)
             login_user(new_user)
             db.session.add(new_user)
             db.session.commit()
@@ -193,7 +193,7 @@ def creat_playlist():
 		if current_user.is_anonymous:
 			ret['status'] = 'error'
 			return ret
-		
+
 		playlist_name = request.form.get('name')
 		playlist_type = request.form.get('type')
 		if playlist_name:
@@ -215,7 +215,7 @@ def add_music_to_playlist():
 			ret['status'] = 'error'
 			ret['reason'] = 'not login'
 			return ret
-		
+
 		which_playlist_id = request.form.get('playlist_id')
 		which_music_id = request.form.get('music_id')
 		if which_music_id and which_playlist_id:
@@ -225,7 +225,12 @@ def add_music_to_playlist():
 				ret['status'] = 'error'
 				ret['reason'] = 'music id not exist or music already in playlist'
 				return ret
-
+			number_of_songs = len(InWhichPlaylist.query.filter_by(P_id = which_playlist_id).all())
+			print(number_of_songs)
+			if number_of_songs > current_user.limit :
+				ret['status'] = 'error'
+				ret['reason'] = 'reach the limit of songs'
+				return ret;
 			new_music_added_to_playlist = InWhichPlaylist(M_id=which_music_id, P_id=which_playlist_id, UID=current_user.id)
 			db.session.add(new_music_added_to_playlist)
 			db.session.commit()
@@ -234,7 +239,7 @@ def add_music_to_playlist():
 		else:
 			ret['status'] = 'error'
 			ret['reason'] = 'music id or playlist id can\'t be empty'
-			flash("music id or playlist id can't be empty", category="error")
+			#flash("music id or playlist id can't be empty", category="error")
 			return ret
 
 @auth.route("/remove_music_from_playlist", methods=['POST'])
