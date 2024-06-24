@@ -187,6 +187,38 @@
 
     $("#playlist-button").on("click", playlistVisibility);
 
+    // 重新載入播放清單
+
+    function songHTML(song, index) {
+      return `
+        <button class="song neu-s" data-count="${index}">
+          <img src="${song.thumbnail_url}" alt="${song.title}">
+          <div class="song-text">
+            <h2 class="song-title">
+              ${song.title}
+            </h2>
+            <h3 class="artist-title">
+              ${song.artist}
+            </h3>
+          </div>
+          <div class="btn-delete" data-count="${index}">
+            <i class="fas fa-times red"></i>
+          </div>
+        </button>
+      `;
+    }
+
+    function reloadPlaylist() {
+      $(".songlist").empty();
+      playlist.forEach((song, index) => {
+        $(".songlist").append(songHTML(song, index));
+      });
+      let deleteBtn = $(".btn-delete");
+      if (isDeleteVisible) {
+        deleteBtn.css("display", "block");
+      }
+    }
+
     // 新增音樂
     
     $("#playlist-add").on("click", function() {
@@ -221,22 +253,7 @@
             return alert('添加音樂失敗，請重試: ' + response.reason);
           }
           playlist.push(data);
-          $(".songlist").append(`
-            <button class="song neu-s" data-count="${playlist.length - 1}">
-              <img src="${data.thumbnail_url}" alt="${data.title}">
-              <div class="song-text">
-                <h2 class="song-title">
-                  ${data.title}
-                </h2>
-                <h3 class="artist-title">
-                  ${data.artist}
-                </h3>
-              </div>
-              <div class="btn-delete" data-count="${playlist.length - 1}">
-                <i class="fas fa-times red"></i>
-              </div>
-            </button>
-          `);
+          $(".songlist").append(songHTML(data, playlist.length - 1));
         },
         error: function(error) {
           alert('添加音樂失敗，請重試。');
@@ -276,6 +293,10 @@
             $("#play-button").html('<i class="fas fa-play"></i>');
             loadSong(0);
           }
+          if(index < currentIndex) {
+            currentIndex--;
+          }
+          reloadPlaylist();
         },
         error: function(error) {
           alert('刪除音樂失敗，請重試。');
