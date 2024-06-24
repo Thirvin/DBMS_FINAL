@@ -1,164 +1,135 @@
-# Music Streaming API Documentation
-
-## Overview
-This document provides a comprehensive overview of the available API endpoints for the music streaming service. Each endpoint is described with its respective method, description, request parameters, and responses.
+# Music Streaming Website Application
 
 ## Table of Contents
-1. [Login](#1-login)
-2. [Logout](#2-logout)
-3. [Sign Up](#3-sign-up)
-4. [Search URL](#4-search-url)
-5. [Search by ID](#5-search-by-id)
-6. [Play Playlist](#6-play-playlist)
-7. [Create Playlist](#7-create-playlist)
-8. [Add Music to Playlist](#8-add-music-to-playlist)
-9. [Remove Music from Playlist](#9-remove-music-from-playlist)
-10. [Test](#10-test)
-11. [Get All Playlists](#11-get-all-playlists)
+1. [Introduction](#introduction)
+2. [Features](#features)
+3. [Tech Stack](#tech-stack)
+4. [Project Structure](#project-structure)
+5. [Installation Guide](#installation-guide)
+6. [Usage](#usage)
+7. [API Reference](#api-reference)
+8. [Data Models](#data-models)
+9. [Security Considerations](#security-considerations)
+10. [Performance Optimization](#performance-optimization)
 
-## 1. Login
-- **Endpoint:** `/login`
-- **Methods:** GET, POST
-- **Description:** Allows users to log in.
-- **Request:**
-  - **POST Parameters:**
-    - `email`: User's email address.
-    - `password`: User's password.
-- **Responses:**
-  - On success: Redirects to the home page and flashes a success message.
-  - On failure: Flashes an error message and reloads the login page.
-- **Template:** `login.html`
+## Introduction
 
-## 2. Logout
-- **Endpoint:** `/logout`
-- **Methods:** GET
-- **Description:** Logs out the current user.
-- **Responses:** Renders the logout page.
-- **Template:** `logout.html`
+This is a music streaming website application developed using the Flask framework. Users can register accounts, create personal playlists, search for and play music from YouTube. The application aims to provide a simple yet feature-rich music playback platform.
 
-## 3. Sign Up
-- **Endpoint:** `/sigh-up`
-- **Methods:** GET, POST
-- **Description:** Allows new users to register.
-- **Request:**
-  - **POST Parameters:**
-    - `email`: User's email address.
-    - `firstName`: User's first name.
-    - `password1`: User's password.
-    - `password2`: User's password confirmation.
-- **Responses:**
-  - On success: Redirects to the home page and flashes a success message.
-  - On failure: Flashes an error message and reloads the sign-up page.
-- **Template:** `sigh-up.html`
+## Features
 
-## 4. Search URL
-- **Endpoint:** `/search_url`
-- **Methods:** POST
-- **Description:** Searches for a YouTube URL and retrieves audio information.
-- **Request:**
-  - **POST Parameters:**
-    - `search_query`: YouTube URL to search.
-- **Responses:**
-  - On success: Returns a JSON object with audio details.
-  - Example response:
-    ```json
-    {
-      "status": "success",
-      "audio_url": "audio_url",
-      "id": "id",
-      "thumbnail_url": "thumbnail_url",
-      "artist": "artist",
-      "title": "title"
-    }
-    ```
+- User authentication system (register, login, logout)
+- YouTube music search and playback
+- Personal playlist management
+- Music addition and removal functionality
+- User music quantity limit management
 
-## 5. Search by ID
-- **Endpoint:** `/search_id`
-- **Methods:** POST
-- **Description:** Searches for a music entry by its ID and retrieves audio information.
-- **Request:**
-  - **POST Parameters:**
-    - `search_query`: JSON object containing the music ID.
-- **Responses:**
-  - On success: Returns a JSON object with audio details.
-  - On failure: Returns a JSON object with an error status.
-  - Example response:
-    ```json
-    {
-      "status": "success",
-      "audio_url": "audio_url",
-      "title": "title"
-    }
-    ```
+## Tech Stack
 
-## 6. Play Playlist
-- **Endpoint:** `/play/<path:index>`
-- **Methods:** GET
-- **Description:** Retrieves and plays a playlist by its ID.
-- **Parameters:**
-  - `index`: Playlist ID.
-- **Responses:** Renders the play page with playlist data.
-- **Template:** `play.html`
+- Backend: Python 3.x, Flask
+- Database: SQLite (via SQLAlchemy ORM)
+- Frontend: HTML, JavaScript (assumed, not shown in provided code)
+- External Libraries: yt-dlp (for YouTube audio extraction)
+- Authentication: Flask-Login
 
-## 7. Create Playlist
-- **Endpoint:** `/creat_playlist`
-- **Methods:** POST
-- **Description:** Creates a new playlist for the current user.
-- **Request:**
-  - **POST Parameters:**
-    - `name`: Name of the playlist.
-    - `type`: Type of the playlist.
-- **Responses:**
-  - On success: Returns a JSON object with success status and playlist ID.
-  - On failure: Returns a JSON object with an error status.
+## Project Structure
+project_root  
+│  
+├── website  
+│   ├── init.py     				# App initialization and configuration  
+│   ├── auth.py         			# Authentication-related routes and functions  
+│   ├── models.py       			# Database model definitions  
+│   ├── views.py        			# Main view routes  
+│   ├── templates/      			# HTML templates  
+│   └── static/         			# CSS templates 
+│ 	 
+├── main.py             			# Application entry point  
+└── instances/database.db           # SQLite database file (auto-generated)  
+## Installation Guide
 
-## 8. Add Music to Playlist
-- **Endpoint:** `/add_music_to_playlist`
-- **Methods:** POST
-- **Description:** Adds a music entry to a playlist.
-- **Request:**
-  - **POST Parameters:**
-    - `playlist_id`: ID of the playlist.
-    - `music_id`: ID of the music.
-- **Responses:**
-  - On success: Returns a JSON object with success status.
-  - On failure: Returns a JSON object with an error status and reason.
+1. Clone the repository:
+git clone https://github.com/Thirvin/DBMS_FINAL.git
+cd DBMS_FINAL
+2. Create and activate a virtual environment:
+python -m venv venv
+source venv/bin/activate  # On Windows use venv\Scripts\activate
+3. Install dependencies:
+## Usage
 
-## 9. Remove Music from Playlist
-- **Endpoint:** `/remove_music_from_playlist`
-- **Methods:** POST
-- **Description:** Removes a music entry from a playlist.
-- **Request:**
-  - **POST Parameters:**
-    - `music_id`: ID of the music.
-    - `playlist_id`: ID of the playlist.
-- **Responses:**
-  - On success: Returns a JSON object with success status.
-  - On failure: Returns a JSON object with an error status.
+1. Run the application:
+python main.py
+2. Access `http://localhost:5000` in your browser
 
-## 10. Test
-- **Endpoint:** `/test`
-- **Methods:** GET
-- **Description:** Test endpoint for rendering a test page.
-- **Responses:** Renders the test page.
-- **Template:** `test.html`
+3. Register a new account or log in with an existing one
 
-## 11. Get All Playlists
-- **Endpoint:** `/get_all_list`
-- **Methods:** POST
-- **Description:** Retrieves all playlists for the current user.
-- **Responses:**
-  - On success: Returns a JSON object with a list of playlists.
-  - On failure: Returns a JSON object with an error status.
-  - Example response:
-    ```json
-    {
-      "datas": [
-        {
-          "id": "playlist_id",
-          "title": "playlist_title"
-        }
-      ]
-    }
-    ```
+4. Use the search function to find music, create playlists, and enjoy the music!
+
+## API Reference
+
+### Authentication
+
+- POST `/login`: User login
+- GET `/logout`: User logout
+- POST `/sigh-up`: User registration
+
+### Music
+
+- POST `/search_url`: Search music by YouTube URL
+- POST `/search_id`: Search music by music ID
+- GET `/play/<path:index>`: Play specific music
+
+### Playlist
+
+- POST `/creat_playlist`: Create a new playlist
+- POST `/add_music_to_playlist`: Add music to a playlist
+- POST `/remove_music_from_playlist`: Remove music from a playlist
+- POST `/get_all_list`: Get all playlists of a user
+- POST `/remove_playlist`: Delete a playlist
+
+### User Management
+
+- POST `/increase_limit`: Increase user's music limit
+
+## Data Models
+
+### User
+- id: Integer, primary key
+- email: String, unique
+- password: String (stored encrypted)
+- first_name: String
+- last_name: String
+- membership: String
+- limit: Integer
+
+### Music
+- id: String, primary key
+- M_title: String
+- audio_url: String
+- thumbnail_url: String
+- artist: String
+- original_url: String
+
+### Playlist
+- P_id: Integer, primary key
+- P_type: String
+- P_title: String
+- P_size: Integer
+- is_private: Boolean
+- UID: Integer, foreign key (User)
+
+### InWhichPlaylist
+- M_id: Integer, foreign key (Music)
+- P_id: Integer, foreign key (Playlist)
+- UID: Integer, foreign key (User)
+
+## Security Considerations
+
+- Use of Werkzeug's generate_password_hash and check_password_hash functions for password encryption and verification
+- Utilization of Flask-Login for managing user sessions, ensuring secure authentication
+- User authentication for sensitive operations (e.g., adding/removing music)
+
+## Performance Optimization
+
+- Use of SQLAlchemy ORM for efficient database queries
+- Implementation of music URL caching to reduce requests to YouTube
 
