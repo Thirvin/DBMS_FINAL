@@ -123,7 +123,7 @@ def search_url():
                 db.session.commit()
     music = Music.query.filter_by(original_url = youtube_url).first()
     ret = dict()
-    ret['status'] = 'sucess'
+    ret['status'] = 'success'
     ret['audio_url'] = music.audio_url
     ret['id'] = music.id
     ret['thumbnail_url'] = music.thumbnail_url
@@ -272,6 +272,7 @@ def get_all_list():
 		return {"status" : "error"}
 	playlists = Playlist.query.filter_by(UID=current_user.id).all()
 	ret = {'datas' : []}
+	ret['status'] = 'success'
 	for data in playlists:
 		ret['datas'].append({'id' : data.P_id, 'title' : data.P_title})
 	return ret
