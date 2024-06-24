@@ -41,7 +41,7 @@ project_root
 │   ├── models.py       			# Database model definitions  
 │   ├── views.py        			# Main view routes  
 │   ├── templates/      			# HTML templates  
-│   └── static/         			# CSS templates 
+│   └── static/         			# CSS templates  
 │ 	 
 ├── main.py             			# Application entry point  
 └── instances/database.db           # SQLite database file (auto-generated)  
