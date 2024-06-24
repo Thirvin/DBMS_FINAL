@@ -169,6 +169,12 @@ def search_id():
     ret['title'] = music.M_title
     return ret
 
+@auth.route('/subscribe', methods=['GET'])
+def subscribe():
+    if current_user.is_anonymous:
+        return redirect(url_for('auth.login'))
+    return render_template('subscribe.html', user = current_user)
+
 
 @auth.route('/play/<path:index>',methods=['GET'])
 def play(index):

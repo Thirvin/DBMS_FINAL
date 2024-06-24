@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Subscribe{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="/static/css/subscribe.css">
+
+<!-- The Modal -->
+<div id="input-modal" class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">新增音樂：請輸入連結</h5>
+        <div class="btn-close" data-bs-dismiss="modal"><i class="fas fa-times"></i></div>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">URL:</label>
+            <input type="text" class="form-control" id="recipient-name"
+              placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="add-music" data-bs-dismiss="modal">加入音樂</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Player container -->
+<div class="container">
+  <h1>Subscribe!</h1>
+  <div class="describe">
+    訂閱以獲得更多的播放清單額度！
+  </div>
+  <div id="playlistContainer">
+
+    <!-- Playlists will be loaded here -->
+
+  </div>
+
+  <div class="btn-set">
+    <button data-daller="10" class="sub-button">
+      <i class="fa fa-dollar"></i> 10 - 播放清單上限 <i class="fas fa-plus fa-sm"></i> 1！
+    </button>
+    <button data-daller="25" class="sub-button">
+      <i class="fa fa-dollar"></i> 25 - 播放清單上限 <i class="fas fa-plus fa-sm"></i> 5！
+    </button>
+    <button data-daller="50" class="sub-button">
+      <i class="fa fa-dollar"></i> 50 - 播放清單上限 <i class="fas fa-plus fa-sm"></i> 20！
+    </button>
+    <button data-daller="999" class="sub-button">
+      <i class="fa fa-dollar"></i> 999 - 超級大放送！播放清單上限 <i class="fas fa-plus fa-sm"></i> 999！
+    </button>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+
+  });
+</script>
+
+{% endblock %}
