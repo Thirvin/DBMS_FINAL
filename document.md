@@ -15,13 +15,14 @@ This document provides a comprehensive overview of the available API endpoints f
 9. [Remove Music from Playlist](#9-remove-music-from-playlist)
 10. [Test](#10-test)
 11. [Get All Playlists](#11-get-all-playlists)
+12. [Increase Limit](#12-increase-limit)
 
 ## 1. Login
 - **Endpoint:** `/login`
 - **Methods:** GET, POST
 - **Description:** Allows users to log in.
 - **Request:**
-  - **POST Parameters:**
+  - **POST Parameters:** 
     - `email`: User's email address.
     - `password`: User's password.
 - **Responses:**
@@ -56,7 +57,7 @@ This document provides a comprehensive overview of the available API endpoints f
 - **Methods:** POST
 - **Description:** Searches for a YouTube URL and retrieves audio information.
 - **Request:**
-  - **POST Parameters:**
+  - **POST Parameters:** 
     - `search_query`: YouTube URL to search.
 - **Responses:**
   - On success: Returns a JSON object with audio details.
@@ -77,7 +78,7 @@ This document provides a comprehensive overview of the available API endpoints f
 - **Methods:** POST
 - **Description:** Searches for a music entry by its ID and retrieves audio information.
 - **Request:**
-  - **POST Parameters:**
+  - **POST Parameters:** 
     - `search_query`: JSON object containing the music ID.
 - **Responses:**
   - On success: Returns a JSON object with audio details.
@@ -95,7 +96,7 @@ This document provides a comprehensive overview of the available API endpoints f
 - **Endpoint:** `/play/<path:index>`
 - **Methods:** GET
 - **Description:** Retrieves and plays a playlist by its ID.
-- **Parameters:**
+- **Parameters:** 
   - `index`: Playlist ID.
 - **Responses:** Renders the play page with playlist data.
 - **Template:** `play.html`
@@ -105,7 +106,7 @@ This document provides a comprehensive overview of the available API endpoints f
 - **Methods:** POST
 - **Description:** Creates a new playlist for the current user.
 - **Request:**
-  - **POST Parameters:**
+  - **POST Parameters:** 
     - `name`: Name of the playlist.
     - `type`: Type of the playlist.
 - **Responses:**
@@ -117,7 +118,7 @@ This document provides a comprehensive overview of the available API endpoints f
 - **Methods:** POST
 - **Description:** Adds a music entry to a playlist.
 - **Request:**
-  - **POST Parameters:**
+  - **POST Parameters:** 
     - `playlist_id`: ID of the playlist.
     - `music_id`: ID of the music.
 - **Responses:**
@@ -129,7 +130,7 @@ This document provides a comprehensive overview of the available API endpoints f
 - **Methods:** POST
 - **Description:** Removes a music entry from a playlist.
 - **Request:**
-  - **POST Parameters:**
+  - **POST Parameters:** 
     - `music_id`: ID of the music.
     - `playlist_id`: ID of the playlist.
 - **Responses:**
@@ -162,3 +163,20 @@ This document provides a comprehensive overview of the available API endpoints f
     }
     ```
 
+## 12. Increase Limit
+- **Endpoint:** `/increase_limit`
+- **Methods:** POST
+- **Description:** Increases the song limit for the current user.
+- **Request:**
+  - **POST Parameters:** 
+    - `increase_amount`: The amount by which to increase the limit.
+- **Responses:**
+  - On success: Returns a JSON object with the new limit.
+  - On failure: Returns a JSON object with an error status and message.
+  - Example response:
+    ```json
+    {
+      "status": "success",
+      "new_limit": "new_limit_value"
+    }
+    ```
