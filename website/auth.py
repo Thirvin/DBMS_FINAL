@@ -286,4 +286,27 @@ def remove_playlist():
 	ret = dict()
 	ret['status'] = 'success'
 	return ret
+@auth.route("/increase_limit", methods=['POST'])
+def increase_limit():
+    if request.method == 'POST':
+        user_id = current_user.id
+        increase_amount = request.form.get('increase_amount', type=int)
+
+        ret = {}
+        if user_id and increase_amount:
+            user = User.query.filter_by(id=user_id).first()
+            if user:
+                user.limit += increase_amount
+                db.session.commit()
+                ret['status'] = 'success'
+                ret['new_limit'] = user.limit
+                flash("User limit increased successfully!", category="success")
+            else:
+                ret['status'] = 'error'
+                ret['message'] = 'User not found'
+        else:
+            ret['status'] = 'error'
+            ret['message'] = 'User ID and increase amount are required'
+
+        return ret
 
