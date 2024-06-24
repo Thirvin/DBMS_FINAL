@@ -3,195 +3,111 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
-        html {
-            font-size: 62.5%;
-        }
+<!-- The Modal -->
 
-        body {
-            margin: 0;
-            height: 100vh;
-            font-size: 1.6rem;
-            background: #ffffff;
-            font-family: Roboto, "Courier New", Courier, Georgia, Times, "Times New Roman", serif;
-        }
+<title>Home</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+<link rel="stylesheet" type="text/css" href="/static/css/mainpage.css">
 
-        .container {
-            width: 80vw;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 3rem;
-            overflow-y: hidden;
-            overflow-x: hidden;
-            position: relative;
-            border-radius: 3rem;
-            background: linear-gradient(to right bottom, rgba(255, 184, 142, 0.44), rgba(255, 255, 255, 0.5));
-        }
-
-        .container::before {
-            content: "";
-            top: -10rem;
-            left: -10rem;
-            width: 40rem;
-            height: 40rem;
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.35);
-        }
-
-        .container::after {
-            content: "";
-            bottom: 0rem;
-            right: -10rem;
-            width: 40rem;
-            height: 40rem;
-            margin-bottom: -25rem;
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 185, 142, 0.6);
-        }
-
-        h1 {
-            margin: 0;
-            padding: 6rem 0;
-            padding-top: 7rem;
-            text-align: center;
-            color: #fff;
-            margin-bottom: 3rem;
-            box-shadow: 0 7px 2rem #ea5753;
-            background: rgba(234, 87, 83, 0.7);
-        }
-
-        ol {
-            margin: 0;
-            gap: 1rem;
-            padding: 0;
-            display: flex;
-            list-style: none;
-            place-items: center;
-            flex-direction: column;
-            counter-reset: my-counter;
-        }
-
-        li {
-            width: 100%;
-            text-align: center;
-            color: #fff;
-            border-radius: 3rem;
-            background: rgba(234, 87, 83, 0.7);
-            counter-increment: my-counter;
-            padding: 1.1rem 1.5rem 1.1rem 1.5rem;
-        }
-
-        li::before {
-            content: counter(my-counter) ". ";
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .new-playlist-button {
-            display: block;
-            margin: 2rem auto;
-            padding: 1rem 2rem;
-            font-size: 1.6rem;
-            color: #fff;
-            background: #ea5753;
-            border: none;
-            border-radius: 3rem;
-            cursor: pointer;
-            box-shadow: 0 7px 2rem rgba(234, 87, 83, 0.7);
-        }
-
-        .new-playlist-button:hover {
-            background: #d14642;
-        }
-    </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch("/get_all_list", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "error") {
-                    window.location.href = "/login";
-                } else {
-                    const playlistContainer = document.getElementById("playlistContainer");
-                    data.datas.forEach(playlist => {
-                        const listItem = document.createElement("li");
-                        const link = document.createElement("a");
-                        link.href = `/play/${playlist.id}`;
-                        link.textContent = playlist.title;
-                        listItem.appendChild(link);
-                        playlistContainer.appendChild(listItem);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching playlists:", error);
-                window.location.href = "/login";
-            });
-
-            document.getElementById("newPlaylistButton").addEventListener("click", function() {
-                const playlistName = prompt("Enter the name of the new playlist:");
-                if (playlistName) {
-                    fetch("/creat_playlist", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body: `name=${playlistName}&type=public`
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === "success") {
-                            alert("Playlist created successfully!");
-                            location.reload();
-                        } else {
-                            alert("Failed to create playlist. Please try again.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error creating playlist:", error);
-                        alert("Failed to create playlist. Please try again.");
-                    });
-                }
-            });
-        });
-    </script>
-</head>
-<body>
-    <div class="container">
-        <h1>Your Playlists</h1>
-        <ol id="playlistContainer">
-            <!-- Playlists will be loaded here -->
-        </ol>
-        <button id="newPlaylistButton" class="new-playlist-button">Create New Playlist</button>
+<!-- modal -->
+<div id="input-modal" class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">新增播放清單：請輸入名稱</h5>
+        <div class="btn-close" data-bs-dismiss="modal"><i class="fas fa-times fa-2x"></i></div>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Name:</label>
+            <input type="text" class="form-control" id="recipient-name"
+              placeholder="我的個人專屬名稱">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="add-list" data-bs-dismiss="modal">新增播放清單</button>
+      </div>
     </div>
-</body>
-</html>
+  </div>
+</div>
+
+<!-- playlist list -->
+<div class="container">
+  <h1>Your Playlists</h1>
+  <div id="playlistContainer">
+    <!-- Playlists will be loaded here -->
+  </div>
+  <button id="newPlaylistButton" class="new-playlist-button">Create New Playlist</button>
+</div>
+
+<script>
+  $(document).ready(function () {
+    // Fetch all playlists
+    $.ajax({
+      url: "/get_all_list",
+      method: "POST",
+      contentType: "application/json",
+      success: function (data) {
+        if (data.status === "error") {
+          window.location.href = "/login";
+        } else {
+          $("#playlistContainer").empty();
+          $.each(data.datas, function (index, playlist) {
+            $("#playlistContainer").append(`
+              <div class="new-playlist-button playlist-btn"> 
+                <a href="/play/${playlist.id}" class="button">
+                  <div>${playlist.title}</div>
+                </a>
+              </div>
+            `);
+          });
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching playlists:", error);
+        window.location.href = "/login";
+      }
+    });
+
+    // Create new playlist
+
+    $("#newPlaylistButton").on("click", function() {
+      $("#input-modal").modal('show');
+    });
+
+    $("#add-list").on("click", async function() {
+      const name = $("#recipient-name").val();
+
+      if (name.trim() === '') {
+        alert('請輸入有效的 名稱。');
+        return;
+      }
+
+      $.ajax({
+        url: "/creat_playlist",
+        method: "POST",
+        contentType: "application/x-www-form-urlencoded",
+        data: { name: name, type: "public" },
+        success: function (data) {
+          if (data.status === "success") {
+            // alert("Playlist created successfully!");
+            location.reload();
+          } else {
+            alert("Failed to create playlist. Please try again.");
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error creating playlist:", error);
+          alert("Failed to create playlist. Please try again.");
+        }
+      });
+    });
+    
+  });
+</script>
 
 {% endblock %}
-
