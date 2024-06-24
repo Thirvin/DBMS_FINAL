@@ -33,17 +33,17 @@ This is a music streaming website application developed using the Flask framewor
 - Authentication: Flask-Login
 
 ## Project Structure
-project_root/
-│
-├── website/
-│   ├── init.py     # App initialization and configuration
-│   ├── auth.py         # Authentication-related routes and functions
-│   ├── models.py       # Database model definitions
-│   ├── views.py        # Main view routes
-│   └── templates/      # HTML templates (not provided)
-│
-├── main.py             # Application entry point
-└── database.db         # SQLite database file (auto-generated)
+project_root  
+│  
+├── website  
+│   ├── init.py     # App initialization and configuration  
+│   ├── auth.py         # Authentication-related routes and functions  
+│   ├── models.py       # Database model definitions  
+│   ├── views.py        # Main view routes  
+│   └── templates/      # HTML templates (not provided)  
+│  
+├── main.py             # Application entry point  
+└── database.db         # SQLite database file (auto-generated)  
 ## Installation Guide
 
 1. Clone the repository:
