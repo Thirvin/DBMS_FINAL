@@ -177,10 +177,10 @@
 
     function playlistVisibility() {
       if($playlist.css("display") === "none") {
-        $playlist.css("display", "flex");
+        $playlist.fadeIn();
         $playlistButton.html('<i class="fas fa-chevron-left"></i>');
       } else {
-        $playlist.css("display", "none");
+        $playlist.fadeOut(235);
         $playlistButton.html('<i class="fas fa-chevron-right"></i>');
       }
     } 
@@ -269,7 +269,7 @@
       if (isDeleteVisible) {
         deleteBtn.fadeIn();
       } else {
-        deleteBtn.fadeOut();
+        deleteBtn.fadeOut(235);
       }
     });
 

@@ -4,13 +4,12 @@
 
 {% block content %}
 
-<!-- The Modal -->
-
 <title>Home</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 <link rel="stylesheet" type="text/css" href="/static/css/mainpage.css">
 
 <!-- modal -->
+
 <div id="input-modal" class="modal fade" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -36,17 +35,44 @@
 </div>
 
 <!-- playlist list -->
+
 <div class="container">
   <h1>Your Playlists</h1>
   <div id="playlistContainer">
+
     <!-- Playlists will be loaded here -->
+
   </div>
-  
-  <button id="newPlaylistButton" class="new-playlist-button" style="font-size:32px;font-weight:bold" >+</button>
+
+  <div class="btn-set">
+    <button id="newPlaylistButton" class="new-playlist-button">
+      <i class="fas fa-plus"></i>
+    </button>
+    <button id="listConfigButton" class="new-playlist-button">
+      <i class="fa fa-reorder"></i>
+    </button>
+  </div>
 </div>
 
 <script>
   $(document).ready(function () {
+
+    let isDeleteVisible = false;
+
+    function playlistHTML(playlist) {
+      return `
+        <div class="new-playlist-button playlist-btn">
+          <a href="/play/${playlist.id}" class="button plist-name">
+            <div>${playlist.title}</div>
+          </a>
+          <div class="btn-delete" data-id="${playlist.id}">
+            <i class="fas fa-times red"></i>
+          </div>
+        </div>
+      `;
+    }
+
+
     // Fetch all playlists
     $.ajax({
       url: "/get_all_list",
@@ -58,13 +84,7 @@
         } else {
           $("#playlistContainer").empty();
           $.each(data.datas, function (index, playlist) {
-            $("#playlistContainer").append(`
-              <div class="new-playlist-button playlist-btn"> 
-                <a href="/play/${playlist.id}" class="button">
-                  <div>${playlist.title}</div>
-                </a>
-              </div>
-            `);
+            $("#playlistContainer").append(playlistHTML(playlist));
           });
         }
       },
@@ -95,7 +115,6 @@
         data: { name: name, type: "public" },
         success: function (data) {
           if (data.status === "success") {
-            // alert("Playlist created successfully!");
             location.reload();
           } else {
             alert("Failed to create playlist. Please try again.");
@@ -104,6 +123,39 @@
         error: function (xhr, status, error) {
           console.error("Error creating playlist:", error);
           alert("Failed to create playlist. Please try again.");
+        }
+      });
+    });
+
+    // Delete playlist
+
+    $("#listConfigButton").on("click", function() {
+      let deleteBtn = $(".btn-delete");
+      isDeleteVisible = !isDeleteVisible;
+      if (isDeleteVisible) {
+        deleteBtn.fadeIn();
+      } else {
+        deleteBtn.fadeOut(235);
+      }
+    });
+
+    $("#playlistContainer").on("click", ".btn-delete", function(event) {
+      event.stopPropagation();
+      const index = $(this).data("id");
+      $.ajax({
+        url: '/remove_playlist',
+        type: 'POST',
+        data: { playlist_id: index },
+        success: function(response) {
+          if (response.status === "success") {
+            location.reload();
+          } else {
+            alert("Failed to remove playlist. Please try again.");
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error removing playlist:", error);
+          alert("Failed to remove playlist. Please try again.");
         }
       });
     });
