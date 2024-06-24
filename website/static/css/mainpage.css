@@ -16,6 +16,7 @@ body {
     overflow-x: hidden;
     position: relative;
     border-radius: 3rem;
+    box-shadow: 0 7px 2rem rgba(163, 177, 198, 0.7);
     background: linear-gradient(to right bottom, rgba(224, 229, 236,  1), rgba(224, 229, 236, 1));
 }
 
