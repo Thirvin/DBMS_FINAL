@@ -276,3 +276,13 @@ def get_all_list():
 	for data in playlists:
 		ret['datas'].append({'id' : data.P_id, 'title' : data.P_title})
 	return ret
+@auth.route("/remove_playlist", methods = ['POST'])
+def remove_playlist():
+	Which_list_to_remove = request.form.get('playlist_id')
+	UID = current_user.id
+	tar = Playlist.query.filter_by(P_id = Which_list_to_remove, UID = UID).delete()
+	db.session.commit()
+	ret = dict()
+	ret['status'] = 'success'
+	return ret
+
