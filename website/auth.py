@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_from_directory
 import time
 from .models import User
 from .models import Music
@@ -9,6 +9,7 @@ from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 import yt_dlp
 import json
+import os
 auth = Blueprint('auth', __name__)
 urls = [1,1,[
     'https://youtu.be/ovTiSA9T-RU?si=H5r_oO7-tboMBeYB',
@@ -81,6 +82,10 @@ def register():
 
     return render_template("sigh-up.html",user = current_user)
 
+@auth.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(auth.root_path, 'static'),
+                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
 
 @auth.route('/search_url', methods=['POST'])
 def search_url():
@@ -168,6 +173,12 @@ def search_id():
     ret['audio_url'] = music.audio_url
     ret['title'] = music.M_title
     return ret
+
+@auth.route('/subscribe', methods=['GET'])
+def subscribe():
+    if current_user.is_anonymous:
+        return redirect(url_for('auth.login'))
+    return render_template('subscribe.html', user = current_user)
 
 
 @auth.route('/play/<path:index>',methods=['GET'])

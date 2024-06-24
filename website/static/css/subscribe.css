@@ -1,0 +1,165 @@
+//@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: Roboto, "Courier New", Courier, Georgia, Times, "Times New Roman", serif;
+}
+
+.container {
+    width: 80vw;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 3rem;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    position: relative;
+    border-radius: 3rem;
+    box-shadow: 0 7px 2rem rgba(163, 177, 198, 0.7);
+    background: linear-gradient(135deg, #CC96FA, #FA97D6);
+}
+
+#playlistContainer {
+    z-index: 1;
+}
+h1 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 0.5em;
+}
+
+.describe {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1em;
+}
+
+.sub-button {
+    display: block;
+    margin: 0.5em;
+    padding: 0.5em 1em;
+    font-size: 16px;
+    color: #000000;
+    background: linear-gradient(15deg, #FA97D6, #FABC96);
+    border: none;
+    border-radius: 3rem;
+    cursor: pointer;
+    box-shadow: 0 7px 2rem rgba(163, 177, 198, 0.7);
+}
+
+.sub-button:hover {
+    background: linear-gradient(15deg, #C879AB, #BB8D70);
+}
+
+.btn-set {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    grid-column: 3;
+}
+
+.btn-delete {
+    margin-right: 1em;
+    justify-self: end;
+    display: none;
+  }
+
+
+
+
+
+/* Modal Header */
+.modal-header {
+    padding: 8px 16px;
+    align-items: center;
+}
+
+.modal-header .modal-title {
+    align-items: center;
+    font-size: 20px;
+}
+
+.modal-header .close {
+    color: #65717e;
+    weight: 20px;
+}
+  
+  /* Modal Body */
+.modal-body {
+    padding: 8px 16px;
+}
+
+  .modal-body .form-control {
+    border: 1px solid #BBBFC4;
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
+    margin: 0.5em 0;
+    width: 100%;
+    font-size: 1.6rem;
+}
+
+.modal-body .col-form-label {
+    font-size: 18px;
+    color: #65717e;
+}
+  
+.modal-body .form-control::placeholder {
+    color: #BBBFC4;
+}
+  
+/* Modal Content */
+.modal-content {
+    position: relative;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 90%;
+    border-radius: 0.75em;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+  
+/* Modal Footer */
+.modal-footer {
+    padding: 8px 16px;
+}
+  
+.modal-footer .btn {
+    padding: 10px 20px;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 0.5em;
+    cursor: pointer;
+    font-size: 16px;
+}
+  
+/* Add Animation */
+@keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+}
+
+
+
+.btn {
+    padding: 15px;
+    border-radius: 30px;
+    color: #7e8a98;
+    outline: none;
+    cursor: pointer;
+}
+.btn.lg {
+    font-size: 1em;
+}
+.btn:active {
+    cursor: pointer;
+    box-shadow: inset -5px -5px 15px 0px #ffffff9e, inset 5px 5px 15px 0px #a3b1c6a8;
+}
+.red {
+    color: #e22d49;
+}
