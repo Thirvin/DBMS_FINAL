@@ -16,13 +16,13 @@ body {
     overflow-x: hidden;
     position: relative;
     border-radius: 3rem;
-    background: linear-gradient(to right bottom, rgba(255, 184, 142, 0.44), rgba(255, 255, 255, 0.5));
+    background: linear-gradient(to right bottom, rgba(224, 229, 236,  1), rgba(224, 229, 236, 1));
 }
 
 #playlistContainer {
     z-index: 1;
 }
-
+/*
 #playlistContainer::before {
     content: "";
     top: -10rem;
@@ -47,17 +47,13 @@ body {
     background: rgba(255, 185, 142, 0.6);
     z-index: -1;
 }
-
+*/
 h1 {
     margin: 0;
-    padding: 2rem 0;
+    padding:  0;
     text-align: center;
     font-size: 2.5rem;
-    color: #fff;
     margin-bottom: 1em;
-    box-shadow: 0 7px 2rem #ea5753;
-    background: rgba(234, 87, 83, 0.7);
-    border-radius: 0.5em;
 }
 
 a {
@@ -70,7 +66,7 @@ a {
 
 a:hover {
     text-decoration: none;
-    color: #6A9CF2;
+    color: #000000;
 }
 
 #playlistContainer {
@@ -85,12 +81,24 @@ a:hover {
     margin: 0.5em auto;
     padding: 0.5em 1em;
     font-size: 16px;
-    color: #fff;
-    background: #ea5753;
+    color: #000000;
+    background: #e0e5ec;
     border: none;
     border-radius: 3rem;
     cursor: pointer;
-    box-shadow: 0 7px 2rem rgba(234, 87, 83, 0.7);
+    box-shadow: 0 7px 2rem rgba(163, 177, 198, 0.7);
+}
+.new-C_playlist-button{
+    display: block;
+    margin: 0.5em auto;
+    padding: 0.5em 1em;
+    font-size: 32px;
+    color: #000000;
+    background: #e0e5ec;
+    border: none;
+    border-radius: 3rem;
+    cursor: pointer;
+    box-shadow: 0 7px 2rem rgba(163, 177, 198, 0.7);
 }
 
 .playlist-btn {
@@ -101,7 +109,7 @@ a:hover {
 }
 
 .new-playlist-button:hover {
-    background: #d14642;
+    background: #7e8a98;
 }
 
 /* Modal Header */
