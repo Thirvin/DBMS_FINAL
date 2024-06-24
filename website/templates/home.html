@@ -61,14 +61,14 @@
 
     function playlistHTML(playlist) {
       return `
-        <div class="new-playlist-button playlist-btn">
-          <a href="/play/${playlist.id}" class="button plist-name">
-            <div>${playlist.title}</div>
-          </a>
-          <div class="btn-delete" data-id="${playlist.id}">
-            <i class="fas fa-times red"></i>
+        <a href="/play/${playlist.id}" class="button">
+          <div class="new-playlist-button playlist-btn">
+            <div class="plist-name">${playlist.title}</div>
+            <div class="btn-delete" data-id="${playlist.id}">
+              <i class="fas fa-times red"></i>
+            </div>
           </div>
-        </div>
+        </a>
       `;
     }
 
