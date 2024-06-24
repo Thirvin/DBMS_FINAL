@@ -209,7 +209,6 @@
     }
 
     function reloadPlaylist() {
-      const curID = playlist[currentIndex].id;
       $(".songlist").empty();
       playlist.forEach((song, index) => {
         $(".songlist").append(songHTML(song, index));
@@ -218,12 +217,6 @@
       if (isDeleteVisible) {
         deleteBtn.css("display", "block");
       }
-      currentIndex = 0;
-      playlist.forEach((song, index) => {
-        if(song.id === curID) {
-          currentIndex = index;
-        }
-      });
     }
 
     // 新增音樂
@@ -299,6 +292,9 @@
             audio.pause();
             $("#play-button").html('<i class="fas fa-play"></i>');
             loadSong(0);
+          }
+          if(index < currentIndex) {
+            currentIndex--;
           }
           reloadPlaylist();
         },
