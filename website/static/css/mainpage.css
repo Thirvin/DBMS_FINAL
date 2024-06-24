@@ -1,8 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
-
-html {
-    font-size: 62.5%;
-}
+//@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
 body {
     margin: 0;
@@ -54,35 +50,14 @@ body {
 
 h1 {
     margin: 0;
-    padding: 6rem 0;
-    padding-top: 7rem;
+    padding: 2rem 0;
     text-align: center;
+    font-size: 2.5rem;
     color: #fff;
-    margin-bottom: 3rem;
+    margin-bottom: 1em;
     box-shadow: 0 7px 2rem #ea5753;
     background: rgba(234, 87, 83, 0.7);
     border-radius: 0.5em;
-}
-
-ol {
-    margin: 0;
-    gap: 1rem;
-    padding: 0;
-    display: flex;
-    list-style: none;
-    place-items: center;
-    flex-direction: column;
-    counter-reset: my-counter;
-}
-
-li {
-    width: 100%;
-    text-align: center;
-    color: #fff;
-    border-radius: 3rem;
-    background: rgba(234, 87, 83, 0.7);
-    counter-increment: my-counter;
-    padding: 1.1rem 1.5rem 1.1rem 1.5rem;
 }
 
 a {
@@ -94,7 +69,8 @@ a {
 }
 
 a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    color: #6A9CF2;
 }
 
 #playlistContainer {
@@ -107,8 +83,8 @@ a:hover {
 .new-playlist-button {
     display: block;
     margin: 0.5em auto;
-    padding: 1rem 2rem;
-    font-size: 1.6rem;
+    padding: 0.5em 1em;
+    font-size: 16px;
     color: #fff;
     background: #ea5753;
     border: none;
