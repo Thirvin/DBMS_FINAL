@@ -38,6 +38,14 @@
         <br><br>
         <input type="submit" value="Remove Music from Playlist">
     </form>
+    <h1>Remove A Playlist</h1>
+    <form action="/remove_playlist" method="POST">
+        <label for="playlist_id">Playlist ID:</label>
+        <input type="text" id="playlist_id" name="playlist_id" required>
+        <br><br>
+        <input type="submit" value="Remove Music from Playlist">
+    </form>
+
 
     <h1>Get All Playlists</h1>
     <form action="/get_all_list" method="POST">
